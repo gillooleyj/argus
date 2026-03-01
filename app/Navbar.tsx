@@ -32,7 +32,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="border-b border-brand-gold" style={{ background: "linear-gradient(to right, #1B3A6B 0%, #0D1C2E 38%)" }}>
+    <nav className="border-b border-brand-gold" style={{ background: "linear-gradient(to right, #1A2535 0%, #0D1C2E 38%)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Top bar (always visible) ─────────────────────────────────────── */}
