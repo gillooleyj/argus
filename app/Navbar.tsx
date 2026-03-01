@@ -36,7 +36,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Top bar (always visible) ─────────────────────────────────────── */}
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-[68px]">
 
           {/* Left: logo + desktop nav links */}
           <div className="flex items-center gap-8">
@@ -46,9 +46,9 @@ export default function Navbar() {
                 src="/images/argus-logo-icon.svg"
                 alt=""
                 aria-hidden="true"
-                className="h-11 w-auto"
+                style={{ height: "52px", width: "auto" }}
               />
-              <span className="text-lg font-bold tracking-tight text-white">
+              <span className="tracking-tight text-white" style={{ fontSize: "22px", fontWeight: 700 }}>
                 Argus
               </span>
             </Link>
