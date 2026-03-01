@@ -7,7 +7,17 @@ const config: Config = {
   ],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brand: {
+          navy: "#0D1C2E",
+          blue: "#1B3A6B",
+          gold: "#C8943A",
+          "gold-hover": "#D4A045",
+          body: "#C8C8D0",
+        },
+      },
+    },
   },
   plugins: [],
 };

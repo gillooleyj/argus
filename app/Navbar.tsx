@@ -27,12 +27,12 @@ export default function Navbar() {
 
   function linkClass(href: string) {
     return pathname?.startsWith(href)
-      ? "text-blue-900 dark:text-blue-400"
-      : "text-gray-600 dark:text-gray-400 hover:text-blue-900 dark:hover:text-blue-400";
+      ? "text-brand-gold"
+      : "text-brand-body hover:text-brand-gold";
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <nav className="bg-brand-navy border-b border-brand-gold">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Top bar (always visible) ─────────────────────────────────────── */}
@@ -40,15 +40,15 @@ export default function Navbar() {
 
           {/* Left: logo + desktop nav links */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/argus-logo-icon.svg"
                 alt=""
                 aria-hidden="true"
-                className="h-8 w-auto"
+                className="h-11 w-auto"
               />
-              <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+              <span className="text-lg font-bold tracking-tight text-white">
                 Argus
               </span>
             </Link>
@@ -75,7 +75,7 @@ export default function Navbar() {
             {user && (
               <button
                 onClick={handleLogout}
-                className="hidden sm:block px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="hidden sm:block px-3 py-1.5 text-sm font-medium text-brand-body hover:text-white border border-brand-gold/60 hover:border-brand-gold rounded-lg hover:bg-white/5 transition-colors"
               >
                 Sign Out
               </button>
@@ -85,7 +85,7 @@ export default function Navbar() {
             <button
               onClick={toggle}
               aria-label="Toggle dark mode"
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-lg text-brand-body hover:bg-white/10 transition-colors"
             >
               {theme === "dark" ? (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen((o) => !o)}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
-                className="sm:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="sm:hidden p-2 rounded-lg text-brand-body hover:bg-white/10 transition-colors"
               >
                 {menuOpen ? (
                   /* X / close */
@@ -124,7 +124,7 @@ export default function Navbar() {
 
         {/* ── Mobile dropdown menu ─────────────────────────────────────────── */}
         {user && menuOpen && (
-          <div className="sm:hidden border-t border-gray-200 dark:border-gray-700 py-2">
+          <div className="sm:hidden border-t border-brand-gold/40 py-2">
             <Link
               href="/certifications"
               className={`block px-2 py-3 text-sm font-medium rounded-lg transition-colors ${linkClass("/certifications")}`}
@@ -143,10 +143,10 @@ export default function Navbar() {
             >
               Account
             </Link>
-            <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <div className="mt-2 pt-2 border-t border-brand-gold/40">
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-2 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-lg transition-colors"
+                className="w-full text-left px-2 py-3 text-sm font-medium text-brand-body hover:text-white rounded-lg transition-colors"
               >
                 Sign Out
               </button>

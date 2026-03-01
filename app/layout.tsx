@@ -26,12 +26,12 @@ export default function RootLayout({
               <div className="flex-1">
                 {children}
               </div>
-              <footer className="border-t border-gray-200 dark:border-gray-700 py-6 px-4 mt-auto">
-                <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-400">
+              <footer className="bg-brand-navy border-t border-brand-gold/40 py-6 px-4 mt-auto">
+                <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-brand-body/70">
                   <p>© {new Date().getFullYear()} Argus by Cooey Tools. All rights reserved.</p>
                   <nav className="flex gap-4">
-                    <Link href="/privacy" className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Privacy Policy</Link>
-                    <Link href="/terms" className="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Terms of Service</Link>
+                    <Link href="/privacy" className="hover:text-brand-gold transition-colors">Privacy Policy</Link>
+                    <Link href="/terms" className="hover:text-brand-gold transition-colors">Terms of Service</Link>
                   </nav>
                 </div>
               </footer>
