@@ -40,17 +40,27 @@ export default function Navbar() {
 
           {/* Left: logo + desktop nav links */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2.5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/argus-logo-icon.svg"
-                alt=""
-                aria-hidden="true"
-                style={{ height: "52px", width: "auto" }}
-              />
-              <span className="tracking-tight text-white" style={{ fontSize: "22px", fontWeight: 700 }}>
-                Argus
-              </span>
+            <Link href="/" className="flex items-center">
+              <div
+                className="flex items-center gap-2.5"
+                style={{
+                  background: "rgba(200, 148, 58, 0.12)",
+                  border: "1px solid rgba(200, 148, 58, 0.4)",
+                  borderRadius: "9999px",
+                  padding: "6px 16px 6px 8px",
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/argus-logo-icon.svg"
+                  alt=""
+                  aria-hidden="true"
+                  style={{ height: "52px", width: "auto" }}
+                />
+                <span className="tracking-tight text-white" style={{ fontSize: "22px", fontWeight: 700 }}>
+                  Argus
+                </span>
+              </div>
             </Link>
 
             {/* Desktop nav links — hidden on mobile */}
