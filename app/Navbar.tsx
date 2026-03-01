@@ -32,7 +32,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="border-b border-brand-gold" style={{ background: "linear-gradient(to right, #12171F 0%, #0D1C2E 38%)" }}>
+    <nav className="border-b border-brand-gold" style={{ background: "linear-gradient(to right, #2A3F5F 0%, #0D1C2E 38%)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Top bar (always visible) ─────────────────────────────────────── */}
@@ -48,7 +48,7 @@ export default function Navbar() {
                 aria-hidden="true"
                 style={{ height: "52px", width: "auto" }}
               />
-              <span className="tracking-tight text-white" style={{ fontSize: "22px", fontWeight: 700 }}>
+              <span className="tracking-tight" style={{ fontSize: "22px", fontWeight: 700, color: "#C8D0DC" }}>
                 Argus
               </span>
             </Link>
