@@ -131,10 +131,10 @@ export default function DateInput({ value, onChange, hasError }: Props) {
   }
 
   const seg =
-    "bg-transparent outline-none text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 text-center min-w-0";
+    "bg-transparent outline-none text-sm text-white placeholder-brand-body/40 text-center min-w-0";
 
   return (
-    <div className={`flex items-center w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 focus-within:ring-2 focus-within:border-transparent cursor-text ${hasError ? "border-red-400 dark:border-red-500 focus-within:ring-red-400 dark:focus-within:ring-red-500" : "border-gray-300 dark:border-gray-600 focus-within:ring-blue-900 dark:focus-within:ring-blue-500"}`}>
+    <div className={`flex items-center w-full px-3 py-2 border rounded-lg bg-brand-navy focus-within:ring-2 focus-within:border-transparent cursor-text ${hasError ? "border-red-400 dark:border-red-500 focus-within:ring-red-400 dark:focus-within:ring-red-500" : "border-brand-gold/40 focus-within:ring-brand-gold"}`}>
       <input
         ref={monthRef}
         type="text"
@@ -150,7 +150,7 @@ export default function DateInput({ value, onChange, hasError }: Props) {
         className={seg}
         style={{ width: "2.5ch" }}
       />
-      <span className="text-gray-300 dark:text-gray-500 select-none mx-0.5">/</span>
+      <span className="text-brand-body/40 select-none mx-0.5">/</span>
       <input
         ref={dayRef}
         type="text"
@@ -167,7 +167,7 @@ export default function DateInput({ value, onChange, hasError }: Props) {
         className={seg}
         style={{ width: "2.5ch" }}
       />
-      <span className="text-gray-300 dark:text-gray-500 select-none mx-0.5">/</span>
+      <span className="text-brand-body/40 select-none mx-0.5">/</span>
       <input
         ref={yearRef}
         type="text"

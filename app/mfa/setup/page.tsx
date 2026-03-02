@@ -50,10 +50,9 @@ function MFASetupInner() {
   const [saving, setSaving] = useState(false);
 
   const inputClass =
-    "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
   const startEnrollment = useCallback(async () => {
-    // Reset all enrollment state so the spinner shows on retry/reset
     setInitError(null);
     setTotpUri("");
     setSecret("");
@@ -62,23 +61,17 @@ function MFASetupInner() {
     setEnrollError(null);
     setShowSecret(false);
 
-    // 1. Check what factors already exist for this user
     const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
     if (listError) {
       setInitError("Failed to check MFA status. Please refresh the page.");
       return;
     }
 
-    // 2. If a verified factor already exists, MFA setup is complete — skip ahead.
-    //    factors.totp is typed as verified-only by the SDK.
     if (factors.totp.length > 0) {
       router.replace("/certifications");
       return;
     }
 
-    // 3. If an unverified (incomplete) factor exists, delete it before enrolling
-    //    a fresh one. This is the root cause of the "factor already exists" error.
-    //    Unverified factors only appear in factors.all, not factors.totp.
     const unverifiedFactor = factors.all.find(
       (f) => f.factor_type === "totp" && f.status === "unverified"
     );
@@ -94,7 +87,6 @@ function MFASetupInner() {
       }
     }
 
-    // 4. Enroll a brand-new TOTP factor
     const { data, error } = await supabase.auth.mfa.enroll({
       factorType: "totp",
     });
@@ -125,7 +117,6 @@ function MFASetupInner() {
     setEnrollLoading(true);
     setEnrollError(null);
 
-    // Challenge
     const { data: challengeData, error: challengeError } =
       await supabase.auth.mfa.challenge({ factorId });
     if (challengeError || !challengeData) {
@@ -136,7 +127,6 @@ function MFASetupInner() {
       return;
     }
 
-    // Verify
     const { error: verifyError } = await supabase.auth.mfa.verify({
       factorId,
       challengeId: challengeData.id,
@@ -148,7 +138,6 @@ function MFASetupInner() {
       return;
     }
 
-    // Generate and store backup codes
     setSaving(true);
     const codes = generateBackupCodes();
     const hashes = await Promise.all(codes.map(hashCode));
@@ -158,7 +147,6 @@ function MFASetupInner() {
     } = await supabase.auth.getUser();
 
     if (user) {
-      // Clear any existing backup codes for this factor, then insert new ones
       await supabase
         .from("backup_codes")
         .delete()
@@ -204,28 +192,28 @@ function MFASetupInner() {
   // ── Backup codes screen ────────────────────────────────────────────────────
   if (screen === "backup-codes") {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8">
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+        <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full mb-3">
               <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-xl font-bold text-white">
               MFA Enabled
             </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-brand-body">
               Save your backup codes — they won&apos;t be shown again.
             </p>
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+          <div className="bg-brand-navy border border-brand-gold/40 rounded-lg p-4 mb-4">
             <div className="grid grid-cols-2 gap-2">
               {backupCodes.map((code) => (
                 <code
                   key={code}
-                  className="text-sm font-mono text-center text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-2 py-1.5"
+                  className="text-sm font-mono text-center text-white bg-brand-blue border border-brand-gold/40 rounded px-2 py-1.5"
                 >
                   {code}
                 </code>
@@ -233,20 +221,20 @@ function MFASetupInner() {
             </div>
           </div>
 
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-5">
+          <p className="text-xs text-brand-body mb-5">
             Each code can only be used once. Using a backup code removes your authenticator — you&apos;ll be prompted to re-enroll immediately.
           </p>
 
           <div className="flex gap-3">
             <button
               onClick={downloadCodes}
-              className="flex-1 py-2 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+              className="flex-1 py-2 px-3 text-sm font-medium text-brand-body bg-transparent border border-brand-gold/40 rounded-lg hover:bg-white/5 transition-colors"
             >
               Download .txt
             </button>
             <button
               onClick={handleDone}
-              className="flex-1 py-2 px-3 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 rounded-lg transition-colors"
+              className="flex-1 py-2 px-3 text-sm font-medium text-white bg-brand-gold hover:bg-brand-gold-hover rounded-lg transition-colors"
             >
               I&apos;ve saved these
             </button>
@@ -258,13 +246,13 @@ function MFASetupInner() {
 
   // ── Enrollment screen ──────────────────────────────────────────────────────
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+      <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-white">
             Set Up Two-Factor Authentication
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-brand-body">
             {fromBackupCode
               ? "Your backup code was used. Please re-enroll a new authenticator."
               : "Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.), then enter the 6-digit code."}
@@ -290,13 +278,13 @@ function MFASetupInner() {
           </div>
         ) : !totpUri ? (
           <div className="flex justify-center py-12">
-            <div className="w-6 h-6 border-2 border-blue-900 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-brand-gold border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <>
             {/* QR Code */}
             <div className="flex justify-center mb-4">
-              <div className="p-4 bg-white border border-gray-200 dark:border-gray-600 rounded-xl">
+              <div className="p-4 bg-white border border-brand-gold/40 rounded-xl">
                 <QRCode value={totpUri} size={220} />
               </div>
             </div>
@@ -306,13 +294,13 @@ function MFASetupInner() {
               <button
                 type="button"
                 onClick={() => setShowSecret((v) => !v)}
-                className="text-xs text-blue-900 dark:text-blue-400 hover:underline"
+                className="text-xs text-brand-gold hover:underline"
               >
                 {showSecret ? "Hide secret key" : "Can't scan? Enter the key manually"}
               </button>
               {showSecret && (
-                <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg">
-                  <code className="text-xs font-mono text-gray-800 dark:text-gray-200 break-all">
+                <div className="mt-2 p-2 bg-brand-navy border border-brand-gold/40 rounded-lg">
+                  <code className="text-xs font-mono text-white break-all">
                     {secret}
                   </code>
                 </div>
@@ -327,10 +315,7 @@ function MFASetupInner() {
                 </div>
               )}
               <div>
-                <label
-                  htmlFor="code"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                >
+                <label htmlFor="code" className="block text-sm font-medium text-brand-body mb-1">
                   6-Digit Code
                 </label>
                 <input
@@ -352,19 +337,19 @@ function MFASetupInner() {
               <button
                 type="submit"
                 disabled={enrollLoading || saving || verifyCode.length < 6}
-                className="w-full py-2 px-4 bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2 px-4 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {enrollLoading || saving ? "Enabling…" : "Enable MFA"}
               </button>
             </form>
 
-            {/* Start Over — lets users recover from a stuck state */}
-            <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700 text-center">
+            {/* Start Over */}
+            <div className="mt-5 pt-4 border-t border-brand-gold/20 text-center">
               <button
                 type="button"
                 onClick={handleReset}
                 disabled={resetting || enrollLoading || saving}
-                className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-50 transition-colors"
+                className="text-xs text-brand-body/60 hover:text-brand-body disabled:opacity-50 transition-colors"
               >
                 {resetting ? "Resetting…" : "QR code not working? Start over"}
               </button>

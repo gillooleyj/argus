@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 const inputClass =
-  "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent text-sm";
+  "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
 export default function SignupPage() {
   const [firstName, setFirstName]           = useState("");
@@ -63,23 +63,20 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8 text-center">
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+        <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8 text-center">
           <div className="text-4xl mb-4">✉️</div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-xl font-bold text-white mb-2">
             Check your email
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-sm text-brand-body mb-6">
             We sent a confirmation link to{" "}
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+            <span className="font-medium text-white">
               {email}
             </span>
             . Click it to activate your account, then sign in.
           </p>
-          <Link
-            href="/login"
-            className="text-sm text-blue-900 dark:text-blue-400 hover:underline font-medium"
-          >
+          <Link href="/login" className="text-sm text-brand-gold hover:underline font-medium">
             Back to sign in
           </Link>
         </div>
@@ -88,12 +85,12 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 mb-2">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+      <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
+        <h1 className="text-2xl font-bold text-center text-white mb-2">
           Create an account
         </h1>
-        <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-8">
+        <p className="text-sm text-center text-brand-body mb-8">
           Start tracking your CPD requirements
         </p>
 
@@ -107,10 +104,7 @@ export default function SignupPage() {
           {/* Name row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label
-                htmlFor="firstName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label htmlFor="firstName" className="block text-sm font-medium text-brand-body mb-1">
                 First Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -125,10 +119,7 @@ export default function SignupPage() {
               />
             </div>
             <div>
-              <label
-                htmlFor="lastName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label htmlFor="lastName" className="block text-sm font-medium text-brand-body mb-1">
                 Last Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -146,10 +137,7 @@ export default function SignupPage() {
 
           {/* Email */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-brand-body mb-1">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -166,10 +154,7 @@ export default function SignupPage() {
 
           {/* Password */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-brand-body mb-1">
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -182,17 +167,14 @@ export default function SignupPage() {
               placeholder="••••••••"
               className={inputClass}
             />
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+            <p className="mt-1 text-xs text-brand-body">
               Minimum 8 characters
             </p>
           </div>
 
           {/* Confirm password */}
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-brand-body mb-1">
               Confirm Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -210,18 +192,15 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 px-4 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Creating account…" : "Create Account"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-6 text-center text-sm text-brand-body">
           Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-blue-900 dark:text-blue-400 hover:underline font-medium"
-          >
+          <Link href="/login" className="text-brand-gold hover:underline font-medium">
             Sign in
           </Link>
         </p>

@@ -103,15 +103,15 @@ export default function OrgAutocomplete({
         onPaste={handlePaste}
         value={value}
         placeholder="e.g. ISC2 or type your own"
-        className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent ${
+        className={`w-full px-3 py-2 border rounded-lg text-sm bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:border-transparent ${
           hasError
             ? "border-red-400 dark:border-red-500 focus:ring-red-400 dark:focus:ring-red-500"
-            : "border-gray-300 dark:border-gray-600 focus:ring-blue-900 dark:focus:ring-blue-500"
+            : "border-brand-gold/40 focus:ring-brand-gold"
         }`}
       />
 
       {showDropdown && (
-        <ul className="absolute z-20 left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden max-h-64 overflow-y-auto">
+        <ul className="absolute z-20 left-0 right-0 mt-1 bg-brand-blue border border-brand-gold/40 rounded-lg shadow-lg overflow-hidden max-h-64 overflow-y-auto">
           {suggestions.map((org, i) => (
             <li key={org.name}>
               <button
@@ -119,12 +119,12 @@ export default function OrgAutocomplete({
                 onMouseDown={() => handleSelect(org)}
                 className={`w-full text-left px-3 py-2.5 flex items-center justify-between gap-4 transition-colors ${
                   i === activeIndex
-                    ? "bg-blue-50 dark:bg-blue-900/40 text-blue-900 dark:text-blue-300"
-                    : "hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    ? "bg-brand-gold/20 text-brand-gold"
+                    : "hover:bg-brand-navy text-brand-body"
                 }`}
               >
                 <span className="font-medium text-sm">{org.name}</span>
-                <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0">
+                <span className="text-xs text-brand-body/50 shrink-0">
                   {org.creditType} · {org.cycleMonths} mo
                 </span>
               </button>

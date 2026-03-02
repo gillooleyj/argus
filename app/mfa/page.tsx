@@ -26,7 +26,7 @@ export default function MFAVerifyPage() {
   const [initError, setInitError] = useState<string | null>(null);
 
   const inputClass =
-    "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
   const initChallenge = useCallback(async () => {
     setInitError(null);
@@ -106,13 +106,13 @@ export default function MFAVerifyPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+      <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-white">
             Two-Factor Authentication
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-brand-body">
             {mode === "totp"
               ? "Enter the 6-digit code from your authenticator app."
               : "Enter one of your backup codes."}
@@ -133,10 +133,7 @@ export default function MFAVerifyPage() {
               </div>
             )}
             <div>
-              <label
-                htmlFor="totp"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label htmlFor="totp" className="block text-sm font-medium text-brand-body mb-1">
                 Authenticator Code
               </label>
               <input
@@ -159,7 +156,7 @@ export default function MFAVerifyPage() {
             <button
               type="submit"
               disabled={totpLoading || totpCode.length < 6 || !challengeId}
-              className="w-full py-2 px-4 bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2 px-4 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {totpLoading ? "Verifying…" : "Verify"}
             </button>
@@ -172,10 +169,7 @@ export default function MFAVerifyPage() {
               </div>
             )}
             <div>
-              <label
-                htmlFor="backup"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label htmlFor="backup" className="block text-sm font-medium text-brand-body mb-1">
                 Backup Code
               </label>
               <input
@@ -189,7 +183,7 @@ export default function MFAVerifyPage() {
                 placeholder="XXXXX-XXXXX"
                 className={`${inputClass} text-center font-mono tracking-wider`}
               />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-xs text-brand-body">
                 Using a backup code will remove your authenticator. You&apos;ll
                 need to re-enroll MFA immediately after.
               </p>
@@ -197,7 +191,7 @@ export default function MFAVerifyPage() {
             <button
               type="submit"
               disabled={backupLoading || !backupCode.trim() || !factorId}
-              className="w-full py-2 px-4 bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2 px-4 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {backupLoading ? "Verifying…" : "Use Backup Code"}
             </button>
@@ -212,7 +206,7 @@ export default function MFAVerifyPage() {
               setTotpError(null);
               setBackupError(null);
             }}
-            className="text-sm text-blue-900 dark:text-blue-400 hover:underline"
+            className="text-sm text-brand-gold hover:underline"
           >
             {mode === "totp"
               ? "Use a backup code instead"

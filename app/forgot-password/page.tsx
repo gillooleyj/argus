@@ -4,6 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
+const inputClass =
+  "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
+
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,23 +32,20 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8 text-center">
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+        <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8 text-center">
           <div className="text-4xl mb-4">✉️</div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-xl font-bold text-white mb-2">
             Check your email
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-sm text-brand-body mb-6">
             If an account exists for{" "}
-            <span className="font-medium text-gray-700 dark:text-gray-300">
+            <span className="font-medium text-white">
               {email}
             </span>
             , you&apos;ll receive a password reset link shortly.
           </p>
-          <Link
-            href="/login"
-            className="text-sm text-blue-900 dark:text-blue-400 hover:underline font-medium"
-          >
+          <Link href="/login" className="text-sm text-brand-gold hover:underline font-medium">
             Back to sign in
           </Link>
         </div>
@@ -54,12 +54,12 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 mb-2">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
+      <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
+        <h1 className="text-2xl font-bold text-center text-white mb-2">
           Reset your password
         </h1>
-        <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-8">
+        <p className="text-sm text-center text-brand-body mb-8">
           Enter your email and we&apos;ll send you a reset link.
         </p>
 
@@ -71,10 +71,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-brand-body mb-1">
               Email
             </label>
             <input
@@ -85,24 +82,21 @@ export default function ForgotPasswordPage() {
               required
               autoComplete="email"
               placeholder="you@example.com"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent text-sm"
+              className={inputClass}
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 px-4 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Sending…" : "Send Reset Link"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          <Link
-            href="/login"
-            className="text-blue-900 dark:text-blue-400 hover:underline font-medium"
-          >
+        <p className="mt-6 text-center text-sm text-brand-body">
+          <Link href="/login" className="text-brand-gold hover:underline font-medium">
             Back to sign in
           </Link>
         </p>

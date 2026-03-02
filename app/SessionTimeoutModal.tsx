@@ -29,7 +29,7 @@ export default function SessionTimeoutModal({
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
       {/* Panel */}
-      <div className="relative w-full max-w-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-6">
+      <div className="relative w-full max-w-sm bg-brand-blue border border-brand-gold/40 rounded-xl shadow-xl p-6">
 
         {/* Icon */}
         <div className="flex justify-center mb-4">
@@ -53,13 +53,13 @@ export default function SessionTimeoutModal({
 
         <h2
           id="timeout-title"
-          className="text-base font-semibold text-center text-gray-900 dark:text-gray-100 mb-1"
+          className="text-base font-semibold text-center text-white mb-1"
         >
           Session Expiring Soon
         </h2>
         <p
           id="timeout-desc"
-          className="text-sm text-center text-gray-500 dark:text-gray-400 mb-4"
+          className="text-sm text-center text-brand-body mb-4"
         >
           Your session will expire due to inactivity. Continue working?
         </p>
@@ -67,7 +67,7 @@ export default function SessionTimeoutModal({
         {/* Countdown */}
         <div className="flex justify-center mb-6">
           <span
-            className="text-4xl font-mono font-bold tabular-nums text-amber-600 dark:text-amber-400"
+            className="text-4xl font-mono font-bold tabular-nums text-brand-gold"
             aria-live="polite"
             aria-atomic="true"
             aria-label={`${secondsLeft} seconds remaining`}
@@ -79,7 +79,7 @@ export default function SessionTimeoutModal({
         <div className="flex gap-3">
           <button
             onClick={onLogOut}
-            className="flex-1 py-2 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+            className="flex-1 py-2 px-3 text-sm font-medium text-brand-body bg-transparent border border-brand-gold/40 rounded-lg hover:bg-white/5 transition-colors"
           >
             Log Out
           </button>
@@ -87,7 +87,7 @@ export default function SessionTimeoutModal({
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
             onClick={onStayLoggedIn}
-            className="flex-1 py-2 px-3 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 rounded-lg transition-colors"
+            className="flex-1 py-2 px-3 text-sm font-medium text-white bg-brand-gold hover:bg-brand-gold-hover rounded-lg transition-colors"
           >
             Stay Logged In
           </button>

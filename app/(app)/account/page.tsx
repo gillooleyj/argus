@@ -95,11 +95,11 @@ export default function AccountPage() {
 
   // ── Shared styles ──────────────────────────────────────────────────────────
   const inputClass =
-    "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
   const labelClass =
     "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
   const selectClass =
-    "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
   // ── Profile state ──────────────────────────────────────────────────────────
   const [profile, setProfile]               = useState<Profile>(EMPTY_PROFILE);
@@ -535,7 +535,7 @@ export default function AccountPage() {
               <button
                 type="submit"
                 disabled={profileSaving}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-medium text-white bg-brand-gold hover:bg-brand-gold-hover rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {profileSaving ? "Saving…" : "Save Profile"}
               </button>
@@ -565,7 +565,7 @@ export default function AccountPage() {
                 type="checkbox"
                 checked={profile.remind_20hrs_unsubmitted}
                 onChange={(e) => setPrefBool("remind_20hrs_unsubmitted", e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded accent-blue-900 dark:accent-blue-400 shrink-0"
+                className="mt-0.5 w-4 h-4 rounded accent-brand-gold shrink-0"
               />
               <div>
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -582,7 +582,7 @@ export default function AccountPage() {
                 type="checkbox"
                 checked={profile.remind_90days_expiry}
                 onChange={(e) => setPrefBool("remind_90days_expiry", e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded accent-blue-900 dark:accent-blue-400 shrink-0"
+                className="mt-0.5 w-4 h-4 rounded accent-brand-gold shrink-0"
               />
               <div>
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -599,7 +599,7 @@ export default function AccountPage() {
                 type="checkbox"
                 checked={profile.remind_quarterly_submit}
                 onChange={(e) => setPrefBool("remind_quarterly_submit", e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded accent-blue-900 dark:accent-blue-400 shrink-0"
+                className="mt-0.5 w-4 h-4 rounded accent-brand-gold shrink-0"
               />
               <div>
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -628,7 +628,7 @@ export default function AccountPage() {
               <button
                 type="submit"
                 disabled={profileSaving}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-medium text-white bg-brand-gold hover:bg-brand-gold-hover rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {profileSaving ? "Saving…" : "Save Preferences"}
               </button>
@@ -672,7 +672,7 @@ export default function AccountPage() {
               </div>
               <button
                 onClick={() => openPanel("regenerate")}
-                className="text-sm text-blue-900 dark:text-blue-400 hover:underline font-medium"
+                className="text-sm text-brand-gold hover:underline font-medium"
               >
                 Regenerate
               </button>
@@ -705,7 +705,7 @@ export default function AccountPage() {
                       </button>
                       <button
                         onClick={() => openPanel(null)}
-                        className="flex-1 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 rounded-lg transition-colors"
+                        className="flex-1 py-2 text-sm font-medium text-white bg-brand-gold hover:bg-brand-gold-hover rounded-lg transition-colors"
                       >
                         Done
                       </button>
@@ -743,7 +743,7 @@ export default function AccountPage() {
                       <button
                         type="submit"
                         disabled={panelLoading || panelCode.length < 6}
-                        className="flex-1 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 hover:bg-blue-800 dark:hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 py-2 text-sm font-medium text-white bg-brand-gold hover:bg-brand-gold-hover rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {panelLoading ? "Verifying…" : "Regenerate Codes"}
                       </button>

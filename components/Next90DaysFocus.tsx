@@ -41,12 +41,12 @@ function formatDate(iso: string): string {
 
 function Skeleton() {
   return (
-    <div className="mb-6 border border-blue-200 dark:border-blue-800 rounded-xl overflow-hidden animate-pulse">
-      <div className="h-11 bg-blue-50 dark:bg-blue-900/20" />
-      <div className="bg-white dark:bg-gray-800 p-4 space-y-3">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
-        <div className="h-16 bg-gray-100 dark:bg-gray-700/50 rounded-lg" />
-        <div className="h-16 bg-gray-100 dark:bg-gray-700/50 rounded-lg" />
+    <div className="mb-6 border border-brand-gold/40 rounded-xl overflow-hidden animate-pulse">
+      <div className="h-11 bg-brand-blue" />
+      <div className="bg-brand-blue p-4 space-y-3">
+        <div className="h-4 bg-brand-blue/60 rounded w-1/3" />
+        <div className="h-16 bg-brand-navy/60 rounded-lg" />
+        <div className="h-16 bg-brand-navy/60 rounded-lg" />
       </div>
     </div>
   );
@@ -178,36 +178,36 @@ export default function Next90DaysFocus() {
 
   if (items.length === 0) {
     return (
-      <div className="mb-6 border border-blue-200 dark:border-blue-800 rounded-xl overflow-hidden">
+      <div className="mb-6 border border-brand-gold/40 rounded-xl overflow-hidden">
         <button
           onClick={() => setCollapsed((c) => !c)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-left"
+          className="w-full flex items-center justify-between px-4 py-3 bg-brand-blue text-left"
         >
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+            <Calendar className="w-4 h-4 text-brand-gold" />
+            <span className="text-sm font-semibold text-brand-gold">
               Next 6 Months Focus
             </span>
           </div>
           {collapsed ? (
-            <ChevronDown className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <ChevronDown className="w-4 h-4 text-brand-gold" />
           ) : (
-            <ChevronUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <ChevronUp className="w-4 h-4 text-brand-gold" />
           )}
         </button>
 
         {!collapsed && (
           <div className="bg-white dark:bg-gray-800 px-4 py-4">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            <p className="text-sm font-medium text-white">
               ✅ All Clear — No certifications expiring in the next 6 months.
             </p>
             {nextUpcoming && (
-              <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-1.5 text-xs text-brand-body">
                 Next up:{" "}
-                <span className="font-medium text-gray-700 dark:text-gray-300">
+                <span className="font-medium text-white">
                   {nextUpcoming.name}
                 </span>{" "}
-                <span className="text-gray-400 dark:text-gray-500">
+                <span className="text-brand-body/50">
                   ({nextUpcoming.organization})
                 </span>{" "}
                 · {nextUpcoming.daysLeft} days away
@@ -226,37 +226,37 @@ export default function Next90DaysFocus() {
   const sortedByDate = [...items].sort((a, b) => a.daysLeft - b.daysLeft);
 
   return (
-    <div className="mb-6 border border-blue-200 dark:border-blue-800 rounded-xl overflow-hidden">
+    <div className="mb-6 border border-brand-gold/40 rounded-xl overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setCollapsed((c) => !c)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-blue-50 dark:bg-blue-900/20 text-left"
+        className="w-full flex items-center justify-between px-4 py-3 bg-brand-blue text-left"
       >
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-          <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+          <Calendar className="w-4 h-4 text-brand-gold" />
+          <span className="text-sm font-semibold text-brand-gold">
             Next 6 Months Focus
           </span>
-          <span className="text-xs font-normal text-blue-600 dark:text-blue-400">
+          <span className="text-xs font-normal text-brand-gold/80">
             ({items.length} certification{items.length !== 1 ? "s" : ""}{" "}
             expiring)
           </span>
         </div>
         {collapsed ? (
-          <ChevronDown className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <ChevronDown className="w-4 h-4 text-brand-gold" />
         ) : (
-          <ChevronUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <ChevronUp className="w-4 h-4 text-brand-gold" />
         )}
       </button>
 
       {!collapsed && (
-        <div className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+        <div className="bg-brand-blue divide-y divide-brand-gold/20">
           {/* ── Action Needed ── */}
           {actionNeeded.length > 0 && (
             <div className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <span className="text-xs font-semibold uppercase tracking-wide text-brand-body">
                   Action Needed
                 </span>
               </div>
@@ -272,20 +272,20 @@ export default function Next90DaysFocus() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                        <p className="text-sm font-semibold text-white truncate">
                           {cert.name}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs text-brand-body mt-0.5">
                           {cert.organization}
                         </p>
 
                         {/* Progress bar */}
                         <div className="mt-2">
                           <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                            <span className="text-xs text-brand-body">
                               {cert.cpe_earned} / {cert.cpe_required} CPD
                             </span>
-                            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                            <span className="text-xs font-medium text-white">
                               {cert.progressPct}%
                             </span>
                           </div>
@@ -319,7 +319,7 @@ export default function Next90DaysFocus() {
                         </span>
                         <a
                           href={`#cert-${cert.id}`}
-                          className="text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline whitespace-nowrap"
+                          className="text-xs font-medium text-brand-gold hover:underline whitespace-nowrap"
                         >
                           View Details →
                         </a>
@@ -336,7 +336,7 @@ export default function Next90DaysFocus() {
             <div className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <CheckCircle2 className="w-4 h-4 text-green-500 dark:text-green-400" />
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <span className="text-xs font-semibold uppercase tracking-wide text-brand-body">
                   On Track
                 </span>
               </div>
@@ -347,7 +347,7 @@ export default function Next90DaysFocus() {
                       key={cert.id}
                       className="flex items-center justify-between gap-2"
                     >
-                      <span className="text-sm text-gray-800 dark:text-gray-200 truncate">
+                      <span className="text-sm text-white truncate">
                         {cert.name}
                       </span>
                       <span className="text-xs text-green-700 dark:text-green-400 shrink-0">
@@ -363,8 +363,8 @@ export default function Next90DaysFocus() {
           {/* ── Upcoming Deadlines timeline ── */}
           <div className="p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Calendar className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              <Calendar className="w-4 h-4 text-brand-body" />
+              <span className="text-xs font-semibold uppercase tracking-wide text-brand-body">
                 Upcoming Deadlines
               </span>
             </div>
@@ -380,10 +380,10 @@ export default function Next90DaysFocus() {
                           : "bg-green-400"
                     }`}
                   />
-                  <span className="text-xs text-gray-700 dark:text-gray-300 flex-1 truncate">
+                  <span className="text-xs text-brand-body flex-1 truncate">
                     {cert.name}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+                  <span className="text-xs text-brand-body/70 shrink-0">
                     {formatDate(cert.expiration_date)} · {cert.daysLeft}d
                   </span>
                 </div>

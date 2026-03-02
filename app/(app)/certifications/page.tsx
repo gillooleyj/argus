@@ -271,7 +271,7 @@ function CertCard({
       {/* Clickable header — expands/collapses the card */}
       <button
         onClick={onToggle}
-        className="w-full px-5 pt-4 pb-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900 focus-visible:ring-inset"
+        className="w-full px-5 pt-4 pb-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-inset"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
@@ -388,7 +388,7 @@ function CertCard({
               <p className={`${lbl} mb-2`}>Annual Progress (Current Year)</p>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                 <div
-                  className="bg-blue-900 dark:bg-blue-500 h-1.5 rounded-full transition-all"
+                  className="bg-brand-gold h-1.5 rounded-full transition-all"
                   style={{ width: `${annualPercent}%` }}
                 />
               </div>
@@ -437,7 +437,7 @@ function CertCard({
                     href={cert.organization_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline transition-colors"
+                    className="text-xs font-medium text-brand-gold hover:underline transition-colors"
                     title={`Submit CPD to ${cert.organization}`}
                   >
                     Submit CPD
@@ -446,7 +446,7 @@ function CertCard({
               </div>
               <Link
                 href={`/cpe-activities?cert=${cert.id}`}
-                className="text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline"
+                className="text-xs font-medium text-brand-gold hover:underline"
               >
                 + Log Activity
               </Link>
@@ -459,7 +459,7 @@ function CertCard({
                 </p>
                 <Link
                   href={`/cpe-activities?cert=${cert.id}`}
-                  className="text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline mt-1 block"
+                  className="text-xs font-medium text-brand-gold hover:underline mt-1 block"
                 >
                   Add your first CPD activity →
                 </Link>
@@ -493,7 +493,7 @@ function CertCard({
                   </div>
                 )}
                 {daysSinceLastSubmission !== null && daysSinceLastSubmission > 180 && (
-                  <div className="mb-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg text-xs text-blue-700 dark:text-blue-400">
+                  <div className="mb-2 px-3 py-2 bg-brand-blue/20 border border-blue-200 dark:border-blue-800 rounded-lg text-xs text-brand-gold">
                     Last submission was {daysSinceLastSubmission} days ago — consider submitting recent activities.
                   </div>
                 )}
@@ -502,7 +502,7 @@ function CertCard({
                   {activities.map((a) => (
                     <div
                       key={a.junction_id}
-                      className="group flex items-start justify-between gap-3 px-3 py-2.5 bg-gray-50 dark:bg-gray-900/40 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-white dark:hover:bg-gray-800/60 transition-colors"
+                      className="group flex items-start justify-between gap-3 px-3 py-2.5 bg-gray-50 dark:bg-gray-900/40 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-brand-gold/40 hover:bg-white dark:hover:bg-gray-800/60 transition-colors"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5 min-w-0">
@@ -511,7 +511,7 @@ function CertCard({
                           </span>
                           <Link
                             href={`/cpe-activities?highlight=${a.activity_id}`}
-                            className="text-xs font-medium text-gray-800 dark:text-gray-200 hover:text-blue-900 dark:hover:text-blue-400 hover:underline truncate"
+                            className="text-xs font-medium text-gray-800 dark:text-gray-200 hover:text-brand-gold hover:underline truncate"
                           >
                             {a.title}
                           </Link>
@@ -533,7 +533,7 @@ function CertCard({
                               <button
                                 key={path}
                                 onClick={() => openAttachment(path)}
-                                className="text-xs text-blue-900 dark:text-blue-400 hover:underline"
+                                className="text-xs text-brand-gold hover:underline"
                               >
                                 📎 {displayFileName(path)}
                               </button>
@@ -579,7 +579,7 @@ function CertCard({
                 href={cert.digital_certificate_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-gold hover:underline"
               >
                 View Certificate
               </a>
@@ -594,7 +594,7 @@ function CertCard({
                 href={cert.organization_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-gold hover:underline"
               >
                 Visit {cert.organization} Website
               </a>
@@ -696,7 +696,7 @@ export default function CertificationsPage() {
       "focus:outline-none focus:ring-2 focus:border-transparent";
     const state = fieldErrors[key]
       ? "border-red-400 dark:border-red-500 focus:ring-red-400 dark:focus:ring-red-500"
-      : "border-gray-300 dark:border-gray-600 focus:ring-blue-900 dark:focus:ring-blue-500";
+      : "border-gray-300 dark:border-gray-600 focus:ring-brand-gold";
     return `${base} ${state} ${extra}`.trim();
   }
 
@@ -1058,7 +1058,7 @@ export default function CertificationsPage() {
         </div>
         <button
           onClick={showForm ? closeForm : openAddForm}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-900 dark:bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
         >
           {showForm ? (
             <>
@@ -1081,7 +1081,7 @@ export default function CertificationsPage() {
               onClick={() => setFilterBy(f)}
               className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap ${
                 filterBy === f
-                  ? "bg-blue-900 dark:bg-blue-700 text-white"
+                  ? "bg-brand-gold text-white"
                   : "border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
               }`}
             >
@@ -1095,7 +1095,7 @@ export default function CertificationsPage() {
             id="cert-sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortBy)}
-            className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-900"
+            className="text-sm border border-brand-gold/40 rounded-lg px-2 py-1.5 bg-brand-navy text-white focus:outline-none focus:ring-2 focus:ring-brand-gold"
           >
             <option value="urgency">Urgency</option>
             <option value="expiration">Expiration</option>
@@ -1141,7 +1141,7 @@ export default function CertificationsPage() {
                     </div>
                     <Link
                       href="/cpe-activities"
-                      className="shrink-0 mt-0.5 text-xs font-medium text-blue-900 dark:text-blue-400 hover:underline whitespace-nowrap"
+                      className="shrink-0 mt-0.5 text-xs font-medium text-brand-gold hover:underline whitespace-nowrap"
                     >
                       View Activity →
                     </Link>
@@ -1356,7 +1356,7 @@ export default function CertificationsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-lg hover:bg-brand-gold-hover disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {saving
                   ? editingCert
@@ -1448,7 +1448,7 @@ export default function CertificationsPage() {
                   onChange={e => setSubmitNotes(e.target.value)}
                   maxLength={500}
                   placeholder="e.g. Submitted via ISC2 CPD Portal…"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg text-sm bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent resize-none"
                 />
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-right">
                   {submitNotes.length}/500
@@ -1473,7 +1473,7 @@ export default function CertificationsPage() {
               <button
                 onClick={handleMarkSubmitted}
                 disabled={submitSaving}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 disabled:opacity-60 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-lg hover:bg-brand-gold-hover disabled:opacity-60 transition-colors"
               >
                 {submitSaving ? "Saving…" : "Save"}
               </button>
@@ -1503,7 +1503,7 @@ export default function CertificationsPage() {
               <button
                 onClick={() => handleBulkMarkSubmitted(bulkConfirmCertId)}
                 disabled={bulkSaving}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 disabled:opacity-60 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-lg hover:bg-brand-gold-hover disabled:opacity-60 transition-colors"
               >
                 {bulkSaving ? "Saving…" : "Confirm"}
               </button>

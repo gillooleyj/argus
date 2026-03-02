@@ -133,7 +133,7 @@ function AttachmentButton({ path }: { path: string }) {
   return (
     <button
       onClick={open}
-      className="inline-flex items-center gap-1 text-xs text-blue-900 dark:text-blue-400 hover:underline"
+      className="inline-flex items-center gap-1 text-xs text-brand-gold hover:underline"
     >
       📎 {displayFileName(path)}
     </button>
@@ -612,7 +612,7 @@ function CpeActivitiesInner() {
     "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm " +
     "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 " +
     "placeholder-gray-400 dark:placeholder-gray-500 " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent";
+    "focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent";
   const inpErr =
     "w-full px-3 py-2 border border-red-400 dark:border-red-500 rounded-lg text-sm " +
     "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 " +
@@ -648,7 +648,7 @@ function CpeActivitiesInner() {
         </div>
         <button
           onClick={showForm ? closeForm : openAddForm}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-900 dark:bg-blue-700 text-white text-sm font-medium rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-gold hover:bg-brand-gold-hover text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
         >
           {showForm ? (
             <><span className="text-lg leading-none">×</span> Cancel</>
@@ -802,7 +802,7 @@ function CpeActivitiesInner() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-lg p-5 text-center cursor-pointer transition-colors ${
                   isDragging
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                    ? "border-brand-gold bg-brand-blue/20"
                     : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
                 }`}
               >
@@ -816,7 +816,7 @@ function CpeActivitiesInner() {
                 />
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Drop files here or{" "}
-                  <span className="text-blue-900 dark:text-blue-400 font-medium">
+                  <span className="text-brand-gold font-medium">
                     click to select
                   </span>
                 </p>
@@ -831,7 +831,7 @@ function CpeActivitiesInner() {
                   {pendingFiles.map((f, i) => (
                     <div
                       key={`${f.name}-${i}`}
-                      className="flex items-center justify-between gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
+                      className="flex items-center justify-between gap-2 px-3 py-1.5 bg-brand-blue/20 border border-blue-200 dark:border-blue-800 rounded-lg"
                     >
                       <span className="text-xs text-gray-700 dark:text-gray-300 truncate">
                         📄 {f.name}{" "}
@@ -861,7 +861,7 @@ function CpeActivitiesInner() {
               {certs.length === 0 ? (
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   No certifications found.{" "}
-                  <a href="/certifications" className="text-blue-900 dark:text-blue-400 hover:underline">
+                  <a href="/certifications" className="text-brand-gold hover:underline">
                     Add one first.
                   </a>
                 </p>
@@ -884,7 +884,7 @@ function CpeActivitiesInner() {
                         key={cert.id}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-colors ${
                           isSelected
-                            ? "border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20"
+                            ? "border-brand-gold/60 bg-brand-blue/20"
                             : isDisabled
                               ? "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 opacity-50"
                               : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/30"
@@ -895,7 +895,7 @@ function CpeActivitiesInner() {
                           checked={isSelected}
                           disabled={isDisabled}
                           onChange={() => toggleCert(String(cert.id))}
-                          className="w-4 h-4 rounded accent-blue-900 dark:accent-blue-400 shrink-0"
+                          className="w-4 h-4 rounded accent-brand-gold shrink-0"
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
@@ -921,7 +921,7 @@ function CpeActivitiesInner() {
                               step="0.25"
                               value={selection?.hoursApplied ?? ""}
                               onChange={(e) => setHours(String(cert.id), e.target.value)}
-                              className="w-20 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-900"
+                              className="w-20 px-2 py-1 text-xs border border-brand-gold/40 rounded-md bg-brand-navy text-white focus:outline-none focus:ring-1 focus:ring-brand-gold"
                             />
                           </div>
                         )}
@@ -954,7 +954,7 @@ function CpeActivitiesInner() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-lg hover:bg-brand-gold-hover disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {saving
                   ? editingId ? "Updating…" : "Saving…"
@@ -976,7 +976,7 @@ function CpeActivitiesInner() {
                 onClick={() => setFilterSubmit(f)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors whitespace-nowrap ${
                   filterSubmit === f
-                    ? "bg-blue-900 dark:bg-blue-700 text-white"
+                    ? "bg-brand-gold text-white"
                     : "border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
@@ -993,7 +993,7 @@ function CpeActivitiesInner() {
             <select
               value={filterCertId}
               onChange={(e) => setFilterCertId(e.target.value)}
-              className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-900"
+              className="text-sm border border-brand-gold/40 rounded-lg px-2 py-1.5 bg-brand-navy text-white focus:outline-none focus:ring-2 focus:ring-brand-gold"
             >
               <option value="">All certifications</option>
               {certs.map((c) => (
@@ -1047,7 +1047,7 @@ function CpeActivitiesInner() {
               id={`activity-${act.id}`}
               className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border transition-colors duration-700 ${
                 highlightedId === act.id
-                  ? "border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                  ? "border-blue-400 dark:border-brand-gold bg-brand-blue/20"
                   : "border-gray-200 dark:border-gray-700"
               }`}
             >
@@ -1098,10 +1098,10 @@ function CpeActivitiesInner() {
                         className="flex items-center justify-between gap-2"
                       >
                         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                          <span className="text-xs text-blue-900 dark:text-blue-400 truncate">
+                          <span className="text-xs text-brand-gold truncate">
                             {ca.certifications?.name ?? ca.certification_id}
                           </span>
-                          <span className="text-xs text-blue-600 dark:text-blue-500 font-medium shrink-0">
+                          <span className="text-xs text-brand-gold font-medium shrink-0">
                             · {formatHours(ca.hours_applied)} hrs
                           </span>
                           <span
@@ -1123,7 +1123,7 @@ function CpeActivitiesInner() {
                               href={ca.certifications.organization_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="shrink-0 text-xs text-gray-500 dark:text-gray-400 hover:text-blue-900 dark:hover:text-blue-400 transition-colors"
+                              className="shrink-0 text-xs text-gray-500 dark:text-gray-400 hover:text-brand-gold transition-colors"
                               title={`Submit CPD to ${ca.certifications.organization}`}
                             >
                               · {ca.certifications.organization} portal
@@ -1219,7 +1219,7 @@ function CpeActivitiesInner() {
                   onChange={e => setSubmitNotes(e.target.value)}
                   maxLength={500}
                   placeholder="e.g. Submitted via ISC2 CPD Portal…"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg text-sm bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent resize-none"
                 />
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-right">
                   {submitNotes.length}/500
@@ -1244,7 +1244,7 @@ function CpeActivitiesInner() {
               <button
                 onClick={handleMarkSubmitted}
                 disabled={submitSaving}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-900 dark:bg-blue-700 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 disabled:opacity-60 transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-brand-gold rounded-lg hover:bg-brand-gold-hover disabled:opacity-60 transition-colors"
               >
                 {submitSaving ? "Saving…" : "Save"}
               </button>
