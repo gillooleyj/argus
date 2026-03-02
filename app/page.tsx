@@ -9,7 +9,7 @@ export default function LandingPage() {
       {/* ── Hero ──────────────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 lg:px-8 pt-20 pb-10 sm:pt-28 sm:pb-14 text-center">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl font-outfit font-extrabold tracking-tight text-white leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-outfit font-extrabold tracking-tight text-brand-heading leading-tight">
             Your Professional Credentials,{" "}
             <span className="text-brand-gold">
               Always Under Control
@@ -29,7 +29,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white border border-brand-gold rounded-lg hover:bg-brand-gold/10 transition-colors"
+              className="w-full sm:w-auto px-6 py-3 text-sm font-medium text-brand-heading border border-brand-gold rounded-lg hover:bg-brand-gold/10 transition-colors"
             >
               Sign In
             </Link>
@@ -76,7 +76,7 @@ export default function LandingPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-base font-semibold text-white mb-2">
+            <h3 className="text-base font-semibold text-brand-heading mb-2">
               Track Every Credential
             </h3>
             <p className="text-sm text-brand-body leading-relaxed">
@@ -100,7 +100,7 @@ export default function LandingPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-base font-semibold text-white mb-2">
+            <h3 className="text-base font-semibold text-brand-heading mb-2">
               Stay On Pace
             </h3>
             <p className="text-sm text-brand-body leading-relaxed">
@@ -126,7 +126,7 @@ export default function LandingPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-base font-semibold text-white mb-2">
+            <h3 className="text-base font-semibold text-brand-heading mb-2">
               Log Activities Easily
             </h3>
             <p className="text-sm text-brand-body leading-relaxed">
@@ -142,7 +142,7 @@ export default function LandingPage() {
       {/* ── CTA band ──────────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 bg-brand-blue/30 border-t border-brand-gold/40">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-outfit font-bold text-white mb-2">
+          <h2 className="text-2xl font-outfit font-bold text-brand-heading mb-2">
             Ready to take control of your credentials?
           </h2>
           <p className="text-sm text-brand-body mb-6">

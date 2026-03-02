@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Brand CSS custom properties ────────────────────────────────────────────
+   Space-separated RGB channels so Tailwind opacity modifiers (/40, /20 etc.)
+   work correctly with: rgb(var(--xxx-rgb) / <alpha-value>)               */
+
+:root {
+  /* Dark theme (default) */
+  --color-bg-primary-rgb:    13  28  46;   /* #0D1C2E */
+  --color-bg-surface-rgb:    27  58 107;   /* #1B3A6B */
+  --color-accent-rgb:       200 148  58;   /* #C8943A */
+  --color-accent-hover-rgb: 212 160  69;   /* #D4A045 */
+  --color-text-heading-rgb: 255 255 255;   /* #FFFFFF */
+  --color-text-body-rgb:    200 200 208;   /* #C8C8D0 */
+}
+
+.light {
+  /* Light theme overrides */
+  --color-bg-primary-rgb:   240 244 248;   /* #F0F4F8 */
+  --color-bg-surface-rgb:   255 255 255;   /* #FFFFFF */
+  --color-accent-rgb:       146 102  14;   /* #92660E */
+  --color-accent-hover-rgb: 170 118  18;   /* #AA7612 */
+  --color-text-heading-rgb:  15  23  42;   /* #0F172A */
+  --color-text-body-rgb:     71  85 105;   /* #475569 */
+}
+
 /* Smooth theme transition */
 html {
   color-scheme: light;

@@ -53,7 +53,7 @@ export default function SessionTimeoutModal({
 
         <h2
           id="timeout-title"
-          className="text-base font-semibold text-center text-white mb-1"
+          className="text-base font-semibold text-center text-brand-heading mb-1"
         >
           Session Expiring Soon
         </h2>

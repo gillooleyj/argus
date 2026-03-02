@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-brand-navy text-white">
+    <div className="min-h-screen bg-brand-navy text-brand-heading">
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-16 pb-16 text-center">
@@ -20,7 +20,7 @@ export default function Home() {
           />
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-brand-heading mb-6 leading-tight">
           Never let a certification
           <br />
           <span className="text-brand-gold">expire on you again.</span>
@@ -40,7 +40,7 @@ export default function Home() {
           </Link>
           <Link
             href="/login"
-            className="border border-brand-gold text-white hover:bg-brand-gold/10 font-medium px-8 py-3 rounded-lg transition-colors text-sm"
+            className="border border-brand-gold text-brand-heading hover:bg-brand-gold/10 font-medium px-8 py-3 rounded-lg transition-colors text-sm"
           >
             Sign In
           </Link>
@@ -71,7 +71,7 @@ export default function Home() {
       {/* Features */}
       <section className="max-w-6xl mx-auto px-6 pb-24">
         <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold text-white mb-3">Everything you need to stay certified</h2>
+          <h2 className="text-3xl font-bold text-brand-heading mb-3">Everything you need to stay certified</h2>
           <p className="text-brand-body">Designed for professionals who hold multiple credentials across different bodies.</p>
         </div>
 
@@ -82,7 +82,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h3 className="font-semibold text-white mb-2">Multi-Certification Tracking</h3>
+            <h3 className="font-semibold text-brand-heading mb-2">Multi-Certification Tracking</h3>
             <p className="text-sm text-brand-body leading-relaxed">
               Track CISSP, CISM, PMP, CompTIA, and dozens more. Each cert shows CPD progress, expiration countdowns, and pace indicators.
             </p>
@@ -94,7 +94,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="font-semibold text-white mb-2">CPD Activity Logging</h3>
+            <h3 className="font-semibold text-brand-heading mb-2">CPD Activity Logging</h3>
             <p className="text-sm text-brand-body leading-relaxed">
               Log continuing education activities once and apply them to multiple certifications simultaneously. Attach proof and track submission status.
             </p>
@@ -106,7 +106,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
-            <h3 className="font-semibold text-white mb-2">Pace Intelligence</h3>
+            <h3 className="font-semibold text-brand-heading mb-2">Pace Intelligence</h3>
             <p className="text-sm text-brand-body leading-relaxed">
               Know exactly how many CPD hours per month you need to hit renewal deadlines. Stay on track before it becomes urgent.
             </p>
@@ -117,7 +117,7 @@ export default function Home() {
       {/* CTA */}
       <section className="border-t border-brand-gold/40 bg-brand-blue/30">
         <div className="max-w-6xl mx-auto px-6 py-16 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Start tracking your credentials today.</h2>
+          <h2 className="text-3xl font-bold text-brand-heading mb-4">Start tracking your credentials today.</h2>
           <p className="text-brand-body mb-8">Free to use. No credit card required.</p>
           <Link
             href="/signup"

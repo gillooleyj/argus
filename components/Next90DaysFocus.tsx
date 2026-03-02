@@ -198,13 +198,13 @@ export default function Next90DaysFocus() {
 
         {!collapsed && (
           <div className="bg-white dark:bg-gray-800 px-4 py-4">
-            <p className="text-sm font-medium text-white">
+            <p className="text-sm font-medium text-brand-heading">
               ✅ All Clear — No certifications expiring in the next 6 months.
             </p>
             {nextUpcoming && (
               <p className="mt-1.5 text-xs text-brand-body">
                 Next up:{" "}
-                <span className="font-medium text-white">
+                <span className="font-medium text-brand-heading">
                   {nextUpcoming.name}
                 </span>{" "}
                 <span className="text-brand-body/50">
@@ -272,7 +272,7 @@ export default function Next90DaysFocus() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-white truncate">
+                        <p className="text-sm font-semibold text-brand-heading truncate">
                           {cert.name}
                         </p>
                         <p className="text-xs text-brand-body mt-0.5">
@@ -285,7 +285,7 @@ export default function Next90DaysFocus() {
                             <span className="text-xs text-brand-body">
                               {cert.cpe_earned} / {cert.cpe_required} CPD
                             </span>
-                            <span className="text-xs font-medium text-white">
+                            <span className="text-xs font-medium text-brand-heading">
                               {cert.progressPct}%
                             </span>
                           </div>
@@ -347,7 +347,7 @@ export default function Next90DaysFocus() {
                       key={cert.id}
                       className="flex items-center justify-between gap-2"
                     >
-                      <span className="text-sm text-white truncate">
+                      <span className="text-sm text-brand-heading truncate">
                         {cert.name}
                       </span>
                       <span className="text-xs text-green-700 dark:text-green-400 shrink-0">

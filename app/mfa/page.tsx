@@ -26,7 +26,7 @@ export default function MFAVerifyPage() {
   const [initError, setInitError] = useState<string | null>(null);
 
   const inputClass =
-    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
   const initChallenge = useCallback(async () => {
     setInitError(null);
@@ -109,7 +109,7 @@ export default function MFAVerifyPage() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
       <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-bold text-white">
+          <h1 className="text-xl font-bold text-brand-heading">
             Two-Factor Authentication
           </h1>
           <p className="mt-1 text-sm text-brand-body">

@@ -50,7 +50,7 @@ function MFASetupInner() {
   const [saving, setSaving] = useState(false);
 
   const inputClass =
-    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
   const startEnrollment = useCallback(async () => {
     setInitError(null);
@@ -200,7 +200,7 @@ function MFASetupInner() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-xl font-bold text-brand-heading">
               MFA Enabled
             </h1>
             <p className="mt-1 text-sm text-brand-body">
@@ -213,7 +213,7 @@ function MFASetupInner() {
               {backupCodes.map((code) => (
                 <code
                   key={code}
-                  className="text-sm font-mono text-center text-white bg-brand-blue border border-brand-gold/40 rounded px-2 py-1.5"
+                  className="text-sm font-mono text-center text-brand-heading bg-brand-blue border border-brand-gold/40 rounded px-2 py-1.5"
                 >
                   {code}
                 </code>
@@ -249,7 +249,7 @@ function MFASetupInner() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
       <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-bold text-white">
+          <h1 className="text-xl font-bold text-brand-heading">
             Set Up Two-Factor Authentication
           </h1>
           <p className="mt-1 text-sm text-brand-body">
@@ -300,7 +300,7 @@ function MFASetupInner() {
               </button>
               {showSecret && (
                 <div className="mt-2 p-2 bg-brand-navy border border-brand-gold/40 rounded-lg">
-                  <code className="text-xs font-mono text-white break-all">
+                  <code className="text-xs font-mono text-brand-heading break-all">
                     {secret}
                   </code>
                 </div>

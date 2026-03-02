@@ -921,7 +921,7 @@ function CpeActivitiesInner() {
                               step="0.25"
                               value={selection?.hoursApplied ?? ""}
                               onChange={(e) => setHours(String(cert.id), e.target.value)}
-                              className="w-20 px-2 py-1 text-xs border border-brand-gold/40 rounded-md bg-brand-navy text-white focus:outline-none focus:ring-1 focus:ring-brand-gold"
+                              className="w-20 px-2 py-1 text-xs border border-brand-gold/40 rounded-md bg-brand-navy text-brand-heading focus:outline-none focus:ring-1 focus:ring-brand-gold"
                             />
                           </div>
                         )}
@@ -993,7 +993,7 @@ function CpeActivitiesInner() {
             <select
               value={filterCertId}
               onChange={(e) => setFilterCertId(e.target.value)}
-              className="text-sm border border-brand-gold/40 rounded-lg px-2 py-1.5 bg-brand-navy text-white focus:outline-none focus:ring-2 focus:ring-brand-gold"
+              className="text-sm border border-brand-gold/40 rounded-lg px-2 py-1.5 bg-brand-navy text-brand-heading focus:outline-none focus:ring-2 focus:ring-brand-gold"
             >
               <option value="">All certifications</option>
               {certs.map((c) => (
@@ -1219,7 +1219,7 @@ function CpeActivitiesInner() {
                   onChange={e => setSubmitNotes(e.target.value)}
                   maxLength={500}
                   placeholder="e.g. Submitted via ISC2 CPD Portal…"
-                  className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg text-sm bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg text-sm bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent resize-none"
                 />
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-right">
                   {submitNotes.length}/500

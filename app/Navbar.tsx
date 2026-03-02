@@ -32,7 +32,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="border-b border-brand-gold" style={{ background: "#0D1C2E" }}>
+    <nav className="border-b border-brand-gold" style={{ background: "rgb(var(--color-bg-primary-rgb))" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── Top bar (always visible) ─────────────────────────────────────── */}
@@ -48,7 +48,7 @@ export default function Navbar() {
                 aria-hidden="true"
                 style={{ height: "52px", width: "auto" }}
               />
-              <span className="tracking-tight" style={{ fontSize: "22px", fontWeight: 700, color: "#C8943A" }}>
+              <span className="tracking-tight" style={{ fontSize: "22px", fontWeight: 700, color: "rgb(var(--color-accent-rgb))" }}>
                 Argus
               </span>
             </Link>
@@ -75,7 +75,7 @@ export default function Navbar() {
             {user && (
               <button
                 onClick={handleLogout}
-                className="hidden sm:block px-3 py-1.5 text-sm font-medium text-brand-body hover:text-white border border-brand-gold/60 hover:border-brand-gold rounded-lg hover:bg-white/5 transition-colors"
+                className="hidden sm:block px-3 py-1.5 text-sm font-medium text-brand-body hover:text-brand-heading border border-brand-gold/60 hover:border-brand-gold rounded-lg hover:bg-brand-heading/5 transition-colors"
               >
                 Sign Out
               </button>
@@ -146,7 +146,7 @@ export default function Navbar() {
             <div className="mt-2 pt-2 border-t border-brand-gold/40">
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-2 py-3 text-sm font-medium text-brand-body hover:text-white rounded-lg transition-colors"
+                className="w-full text-left px-2 py-3 text-sm font-medium text-brand-body hover:text-brand-heading rounded-lg transition-colors"
               >
                 Sign Out
               </button>

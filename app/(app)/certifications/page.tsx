@@ -1095,7 +1095,7 @@ export default function CertificationsPage() {
             id="cert-sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortBy)}
-            className="text-sm border border-brand-gold/40 rounded-lg px-2 py-1.5 bg-brand-navy text-white focus:outline-none focus:ring-2 focus:ring-brand-gold"
+            className="text-sm border border-brand-gold/40 rounded-lg px-2 py-1.5 bg-brand-navy text-brand-heading focus:outline-none focus:ring-2 focus:ring-brand-gold"
           >
             <option value="urgency">Urgency</option>
             <option value="expiration">Expiration</option>
@@ -1448,7 +1448,7 @@ export default function CertificationsPage() {
                   onChange={e => setSubmitNotes(e.target.value)}
                   maxLength={500}
                   placeholder="e.g. Submitted via ISC2 CPD Portal…"
-                  className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg text-sm bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg text-sm bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent resize-none"
                 />
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-right">
                   {submitNotes.length}/500

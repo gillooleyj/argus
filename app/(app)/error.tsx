@@ -21,7 +21,7 @@ export default function Error({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 110 18A9 9 0 0112 3z" />
           </svg>
         </div>
-        <h1 className="text-lg font-semibold text-white mb-2">
+        <h1 className="text-lg font-semibold text-brand-heading mb-2">
           Something went wrong
         </h1>
         <p className="text-sm text-brand-body mb-6">

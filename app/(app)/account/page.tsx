@@ -95,7 +95,7 @@ export default function AccountPage() {
 
   // ── Shared styles ──────────────────────────────────────────────────────────
   const inputClass =
-    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
+    "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
   const labelClass =
     "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
   const selectClass =
@@ -807,7 +807,7 @@ export default function AccountPage() {
                     <button
                       type="submit"
                       disabled={panelLoading || panelCode.length < 6}
-                      className="flex-1 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 py-2 text-sm font-medium text-brand-heading bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {panelLoading ? "Disabling…" : "Disable MFA"}
                     </button>
@@ -887,7 +887,7 @@ export default function AccountPage() {
                 type="button"
                 onClick={handleDeleteAccount}
                 disabled={deleteConfirm !== "DELETE" || deleteLoading}
-                className="flex-1 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2 text-sm font-medium text-brand-heading bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {deleteLoading ? "Deleting…" : "Permanently Delete Account"}
               </button>

@@ -10,11 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          navy: "#0D1C2E",
-          blue: "#1B3A6B",
-          gold: "#C8943A",
-          "gold-hover": "#D4A045",
-          body: "#C8C8D0",
+          navy:         "rgb(var(--color-bg-primary-rgb)    / <alpha-value>)",
+          blue:         "rgb(var(--color-bg-surface-rgb)    / <alpha-value>)",
+          gold:         "rgb(var(--color-accent-rgb)        / <alpha-value>)",
+          "gold-hover": "rgb(var(--color-accent-hover-rgb)  / <alpha-value>)",
+          body:         "rgb(var(--color-text-body-rgb)     / <alpha-value>)",
+          heading:      "rgb(var(--color-text-heading-rgb)  / <alpha-value>)",
         },
       },
     },

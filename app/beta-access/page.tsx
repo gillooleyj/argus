@@ -40,7 +40,7 @@ function BetaAccessForm() {
             <path d="M10 14L13 17L18 11" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <h1 className="text-xl font-bold text-center text-white mb-1">
+        <h1 className="text-xl font-bold text-center text-brand-heading mb-1">
           Beta Access
         </h1>
         <p className="text-sm text-center text-brand-body mb-6">
@@ -67,7 +67,7 @@ function BetaAccessForm() {
               autoFocus
               autoComplete="current-password"
               placeholder="••••••••"
-              className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm"
+              className="w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm"
             />
           </div>
 

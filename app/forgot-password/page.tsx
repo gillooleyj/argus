@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 const inputClass =
-  "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-white placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
+  "w-full px-3 py-2 border border-brand-gold/40 rounded-lg bg-brand-navy text-brand-heading placeholder-brand-body/40 focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent text-sm";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -35,12 +35,12 @@ export default function ForgotPasswordPage() {
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
         <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8 text-center">
           <div className="text-4xl mb-4">✉️</div>
-          <h2 className="text-xl font-bold text-white mb-2">
+          <h2 className="text-xl font-bold text-brand-heading mb-2">
             Check your email
           </h2>
           <p className="text-sm text-brand-body mb-6">
             If an account exists for{" "}
-            <span className="font-medium text-white">
+            <span className="font-medium text-brand-heading">
               {email}
             </span>
             , you&apos;ll receive a password reset link shortly.
@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-brand-navy">
       <div className="w-full max-w-md bg-brand-blue border border-brand-gold/40 rounded-xl shadow-sm p-8">
-        <h1 className="text-2xl font-bold text-center text-white mb-2">
+        <h1 className="text-2xl font-bold text-center text-brand-heading mb-2">
           Reset your password
         </h1>
         <p className="text-sm text-center text-brand-body mb-8">
