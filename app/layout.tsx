@@ -5,6 +5,7 @@ import ThemeProvider from "./ThemeProvider";
 import Navbar from "./Navbar";
 import AuthProvider from "./AuthProvider";
 import SessionTimeoutManager from "./SessionTimeoutManager";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Argus",
@@ -39,6 +40,7 @@ export default function RootLayout({
             </div>
           </ThemeProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
