@@ -7,7 +7,7 @@ export default function Logo({ className }: LogoProps) {
     <span className={`inline-flex items-center gap-2${className ? ` ${className}` : ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/images/argus-logo-icon.svg"
+        src="/images/argus-logo-icon.png"
         alt=""
         aria-hidden="true"
         className="h-6 w-auto"

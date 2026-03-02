@@ -43,7 +43,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/argus-logo-icon.svg"
+                src="/images/argus-logo-icon.png"
                 alt=""
                 aria-hidden="true"
                 style={{ height: "52px", width: "auto" }}

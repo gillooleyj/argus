@@ -134,7 +134,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/argus-logo-icon.svg"
+              src="/images/argus-logo-icon.png"
               alt=""
               aria-hidden="true"
               className="h-5 w-auto"
