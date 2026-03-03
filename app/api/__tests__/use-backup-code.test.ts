@@ -81,10 +81,15 @@ describe("POST /api/auth/use-backup-code", () => {
       default: { compare: vi.fn().mockResolvedValue(true) },
     }));
 
-    // Set env vars
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
-    process.env.SUPABASE_SERVICE_ROLE_KEY = "service-role-key";
+    // Provide stable env values so the module-level validation in env.server.ts
+    // always passes, regardless of the actual process.env state in the test runner.
+    vi.doMock("@/lib/env.server", () => ({
+      serverEnv: {
+        SUPABASE_URL: "https://test.supabase.co",
+        SUPABASE_ANON_KEY: "anon-key",
+        SUPABASE_SERVICE_ROLE_KEY: "service-role-key",
+      },
+    }));
 
     const mod = await import("@/app/api/auth/use-backup-code/route");
     POST = mod.POST as any;
@@ -112,7 +117,6 @@ describe("POST /api/auth/use-backup-code", () => {
 
     // Setup default mock SSR supabase client
     mockSupabase = makeChain();
-    // Use a unique user ID per test run to avoid rate-limit collisions
     const userId = crypto.randomUUID();
     mockSupabase.auth = {
       getUser: vi.fn().mockResolvedValue({
@@ -120,6 +124,8 @@ describe("POST /api/auth/use-backup-code", () => {
         error: null,
       }),
     };
+    // Default: first attempt in window — well under the limit
+    mockSupabase.rpc = vi.fn().mockResolvedValue({ data: 1, error: null });
 
     // Default: lookup returns rows with code_hash (bcrypt compare will return true)
     const lookupChain = makeChain();
@@ -185,26 +191,23 @@ describe("POST /api/auth/use-backup-code", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 429 after 5 attempts from the same user", async () => {
-    // Use a fixed user ID to trigger rate limiting
-    const fixedUserId = "rate-limit-test-" + crypto.randomUUID();
-    mockSupabase.auth = {
-      getUser: vi.fn().mockResolvedValue({
-        data: { user: { id: fixedUserId } },
-        error: null,
-      }),
-    };
+  it("returns 429 when the Supabase rate limit RPC reports count exceeded", async () => {
+    // Simulate the DB returning a count of 6 (> RATE_LIMIT of 5)
+    mockSupabase.rpc = vi.fn().mockResolvedValue({ data: 6, error: null });
     createServerClient.mockReturnValue(mockSupabase);
 
-    // 5 allowed attempts
-    for (let i = 0; i < 5; i++) {
-      await POST(makeRequest(validBody));
-    }
-
-    // 6th attempt should be rate-limited
     const res = await POST(makeRequest(validBody));
     expect(res.status).toBe(429);
     expect((res.body as any).error).toMatch(/Too many attempts/);
+  });
+
+  it("returns 500 when the rate limit RPC fails", async () => {
+    mockSupabase.rpc = vi.fn().mockResolvedValue({ data: null, error: { message: "rpc error" } });
+    createServerClient.mockReturnValue(mockSupabase);
+
+    const res = await POST(makeRequest(validBody));
+    expect(res.status).toBe(500);
+    expect((res.body as any).error).toMatch(/Rate limit check failed/);
   });
 
   it("returns 500 when DB lookup returns error", async () => {
@@ -299,31 +302,9 @@ describe("POST /api/auth/use-backup-code", () => {
     expect((res.body as any).error).toMatch(/Failed to mark code as used/);
   });
 
-  it("returns 500 when service role key is missing", async () => {
-    const savedKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    const lookupChain = makeChain();
-    (lookupChain as any).then = (resolve: (v: unknown) => void) =>
-      resolve({ data: [{ id: "backup-code-row-id", code_hash: "$2b$10$storedHash" }], error: null });
-
-    const updateChain = makeChain();
-    (updateChain as any).then = (resolve: (v: unknown) => void) => resolve({ error: null });
-
-    mockSupabase.from = vi.fn().mockImplementation((_table: string) => {
-      const chain = makeChain();
-      chain.select = vi.fn().mockReturnValue(lookupChain);
-      chain.update = vi.fn().mockReturnValue(updateChain);
-      return chain;
-    });
-    createServerClient.mockReturnValue(mockSupabase);
-
-    const res = await POST(makeRequest(validBody));
-    process.env.SUPABASE_SERVICE_ROLE_KEY = savedKey;
-
-    expect(res.status).toBe(500);
-    expect((res.body as any).error).toMatch(/service role key/);
-  });
+  // Startup validation for missing env vars is covered in env-server.test.ts.
+  // env.server.ts throws at module load time, so a missing SUPABASE_SERVICE_ROLE_KEY
+  // surfaces before any request handler runs — not as a 500 mid-request.
 
   it("returns 500 when deleteFactor fails", async () => {
     mockAdmin.auth.admin.mfa.deleteFactor.mockResolvedValue({
@@ -333,6 +314,67 @@ describe("POST /api/auth/use-backup-code", () => {
     const res = await POST(makeRequest(validBody));
     expect(res.status).toBe(500);
     expect((res.body as any).error).toMatch(/Failed to remove authenticator/);
+  });
+
+  it("rolls back used_at to null when deleteFactor fails so the code can be retried", async () => {
+    mockAdmin.auth.admin.mfa.deleteFactor.mockResolvedValue({
+      error: { message: "delete factor failed" },
+    });
+
+    // Track every payload passed to update() across all from() calls
+    const updatePayloads: unknown[] = [];
+
+    mockSupabase.from = vi.fn().mockImplementation((_table: string) => {
+      const chain = makeChain();
+      // Lookup returns a matching row
+      const lookupChain = makeChain();
+      (lookupChain as any).then = (resolve: (v: unknown) => void) =>
+        resolve({ data: [{ id: "backup-code-row-id", code_hash: "$2b$10$storedHash" }], error: null });
+      chain.select = vi.fn().mockReturnValue(lookupChain);
+      // Spy on every update call and record its payload
+      chain.update = vi.fn().mockImplementation((payload: unknown) => {
+        updatePayloads.push(payload);
+        return makeChain(); // resolves to { error: null } via default .then
+      });
+      chain.delete = vi.fn().mockReturnValue(makeChain());
+      return chain;
+    });
+    createServerClient.mockReturnValue(mockSupabase);
+
+    const res = await POST(makeRequest(validBody));
+
+    expect(res.status).toBe(500);
+    // First update marks the code as used; second update is the rollback
+    expect(updatePayloads).toHaveLength(2);
+    expect(updatePayloads[0]).toMatchObject({ used_at: expect.any(String) });
+    expect(updatePayloads[1]).toMatchObject({ used_at: null });
+  });
+
+  it("does not roll back when deleteFactor succeeds", async () => {
+    // Track every payload passed to update() across all from() calls
+    const updatePayloads: unknown[] = [];
+
+    mockSupabase.from = vi.fn().mockImplementation((_table: string) => {
+      const chain = makeChain();
+      const lookupChain = makeChain();
+      (lookupChain as any).then = (resolve: (v: unknown) => void) =>
+        resolve({ data: [{ id: "backup-code-row-id", code_hash: "$2b$10$storedHash" }], error: null });
+      chain.select = vi.fn().mockReturnValue(lookupChain);
+      chain.update = vi.fn().mockImplementation((payload: unknown) => {
+        updatePayloads.push(payload);
+        return makeChain();
+      });
+      chain.delete = vi.fn().mockReturnValue(makeChain());
+      return chain;
+    });
+    createServerClient.mockReturnValue(mockSupabase);
+
+    const res = await POST(makeRequest(validBody));
+
+    expect(res.status).toBe(200);
+    // Only one update: mark as used. Rollback must NOT have been called.
+    expect(updatePayloads).toHaveLength(1);
+    expect(updatePayloads[0]).toMatchObject({ used_at: expect.any(String) });
   });
 
   it("returns 200 with success on valid backup code", async () => {

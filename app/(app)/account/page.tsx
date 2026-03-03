@@ -272,6 +272,13 @@ export default function AccountPage() {
       hashes.map((code_hash) => ({ user_id: user.id, factor_id: factorId, code_hash }))
     );
 
+    // Fire-and-forget audit log
+    supabase.from("mfa_audit_log").insert({
+      user_id: user.id,
+      event: "backup_codes_regenerated",
+      factor_id: factorId,
+    });
+
     setNewCodes(codes);
     setUnusedCodeCount(codes.length);
     setPanelLoading(false);
@@ -305,6 +312,13 @@ export default function AccountPage() {
       .delete()
       .eq("user_id", user.id)
       .eq("factor_id", factorId);
+
+    // Fire-and-forget audit log
+    supabase.from("mfa_audit_log").insert({
+      user_id: user.id,
+      event: "mfa_disabled",
+      factor_id: factorId,
+    });
 
     await supabase.auth.refreshSession();
     window.location.href = "/mfa/setup";

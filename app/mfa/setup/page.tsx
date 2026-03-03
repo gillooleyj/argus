@@ -160,6 +160,13 @@ function MFASetupInner() {
           code_hash,
         }))
       );
+
+      // Fire-and-forget audit log
+      supabase.from("mfa_audit_log").insert({
+        user_id: user.id,
+        event: "enrollment_complete",
+        factor_id: factorId,
+      });
     }
 
     setBackupCodes(codes);

@@ -9,6 +9,7 @@ type Mode = "totp" | "backup";
 export default function MFAVerifyPage() {
   const router = useRouter();
 
+  const [userId, setUserId] = useState("");
   const [factorId, setFactorId] = useState("");
   const [challengeId, setChallengeId] = useState("");
   const [mode, setMode] = useState<Mode>("totp");
@@ -30,6 +31,9 @@ export default function MFAVerifyPage() {
 
   const initChallenge = useCallback(async () => {
     setInitError(null);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) setUserId(user.id);
+
     const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
     if (listError || !factors?.totp?.length) {
       setInitError("No authenticator found. Please sign in again.");
@@ -68,7 +72,24 @@ export default function MFAVerifyPage() {
       setTotpLoading(false);
       // Re-issue a fresh challenge so the old one doesn't expire
       initChallenge();
+      // Fire-and-forget audit log
+      if (userId) {
+        supabase.from("mfa_audit_log").insert({
+          user_id: userId,
+          event: "totp_verify_fail",
+          factor_id: factorId,
+        });
+      }
       return;
+    }
+
+    // Fire-and-forget audit log
+    if (userId) {
+      supabase.from("mfa_audit_log").insert({
+        user_id: userId,
+        event: "totp_verify_success",
+        factor_id: factorId,
+      });
     }
 
     router.push("/certifications");
@@ -212,6 +233,9 @@ export default function MFAVerifyPage() {
               ? "Use a backup code instead"
               : "Use authenticator app instead"}
           </button>
+          <p className="mt-3 text-xs text-brand-body/50">
+            Codes expire after a few minutes. Refresh the page if yours stops working.
+          </p>
         </div>
       </div>
     </div>

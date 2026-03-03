@@ -3,11 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { serverEnv } from "@/lib/env.server";
 
-// ── Rate limiter: 5 attempts per 15 minutes per user ─────────────────────────
-const rateMap = new Map<string, { count: number; windowStart: number }>();
+// ── Rate limit: 5 attempts per 15-minute window per user ─────────────────────
+// Enforced via a Supabase RPC that atomically increments a persistent counter,
+// so the limit survives server restarts and works across serverless instances.
 const RATE_LIMIT = 5;
-const WINDOW_MS = 15 * 60 * 1000;
 
 export async function POST(request: Request) {
   try {
@@ -21,8 +22,8 @@ export async function POST(request: Request) {
     // ── Get authenticated user from session cookies ──────────────────────────
     const cookieStore = await cookies();
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      serverEnv.SUPABASE_URL,
+      serverEnv.SUPABASE_ANON_KEY,
       {
         cookies: {
           getAll() {
@@ -44,19 +45,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
     }
 
-    // ── Rate limit ───────────────────────────────────────────────────────────
-    const now = Date.now();
-    const entry = rateMap.get(user.id);
-    if (entry && now - entry.windowStart < WINDOW_MS) {
-      if (entry.count >= RATE_LIMIT) {
-        return NextResponse.json(
-          { error: "Too many attempts. Please try again later." },
-          { status: 429 }
-        );
-      }
-      entry.count++;
-    } else {
-      rateMap.set(user.id, { count: 1, windowStart: now });
+    // ── Rate limit (Supabase-backed) ──────────────────────────────────────────
+    const { data: attemptCount, error: rateError } = await supabase.rpc(
+      "check_and_increment_backup_code_rate_limit",
+      { p_user_id: user.id }
+    );
+
+    if (rateError || attemptCount === null) {
+      return NextResponse.json({ error: "Rate limit check failed." }, { status: 500 });
+    }
+
+    if (attemptCount > RATE_LIMIT) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 }
+      );
     }
 
     // ── Normalize and compare against all unused codes via bcrypt ────────────
@@ -98,18 +101,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to mark code as used." }, { status: 500 });
     }
 
-    // ── Delete the TOTP factor via admin API ─────────────────────────────────
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceRoleKey) {
-      return NextResponse.json(
-        { error: "Server misconfiguration: service role key not set." },
-        { status: 500 }
-      );
-    }
+    // ── Audit log: backup code consumed ──────────────────────────────────────
+    // Fire-and-forget — don't block the response on logging success
+    supabase.from("mfa_audit_log").insert({
+      user_id: user.id,
+      event: "backup_code_used",
+      factor_id: factorId,
+    });
 
+    // ── Delete the TOTP factor via admin API ─────────────────────────────────
     const adminClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      serviceRoleKey,
+      serverEnv.SUPABASE_URL,
+      serverEnv.SUPABASE_SERVICE_ROLE_KEY,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
@@ -119,8 +122,16 @@ export async function POST(request: Request) {
     });
 
     if (deleteError) {
+      // Rollback: un-mark the code so the user can try again.
+      // If the rollback itself fails the code stays consumed, but that is
+      // preferable to leaving the factor intact while the code appears used.
+      await supabase
+        .from("backup_codes")
+        .update({ used_at: null })
+        .eq("id", matchedRow.id);
+
       return NextResponse.json(
-        { error: "Failed to remove authenticator factor." },
+        { error: "Failed to remove authenticator factor. Please try again." },
         { status: 500 }
       );
     }

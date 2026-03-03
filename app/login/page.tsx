@@ -39,8 +39,11 @@ function LoginForm() {
         <h1 className="text-2xl font-bold text-center text-brand-heading mb-2">
           Sign in
         </h1>
-        <p className="text-sm text-center text-brand-body mb-8">
+        <p className="text-sm text-center text-brand-body mb-1">
           Welcome back to Argus
+        </p>
+        <p className="text-xs text-center text-brand-body/60 mb-8">
+          You&apos;ll be prompted for a second factor after signing in.
         </p>
 
         <form onSubmit={handleLogin} className="space-y-4">
