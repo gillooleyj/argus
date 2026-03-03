@@ -1,14 +1,13 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 function BetaAccessForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
-  const router = useRouter();
   const redirect = searchParams.get("redirect") || "/";
 
   async function handleSubmit(e: React.FormEvent) {
@@ -16,16 +15,24 @@ function BetaAccessForm() {
     setError(false);
     setLoading(true);
 
-    const res = await fetch("/api/beta-access", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password, redirect }),
-    });
+    try {
+      const res = await fetch("/api/beta-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, redirect }),
+      });
 
-    if (res.ok) {
-      const { redirect: url } = await res.json();
-      router.push(url);
-    } else {
+      if (res.ok) {
+        const { redirect: url } = await res.json();
+        // Hard navigation so the browser sends the fresh cookie on the next
+        // request. router.push (soft nav) can leave the component mounted
+        // during middleware redirect chains, causing the button to stay stuck.
+        window.location.href = url;
+      } else {
+        setError(true);
+        setLoading(false);
+      }
+    } catch {
       setError(true);
       setLoading(false);
     }
