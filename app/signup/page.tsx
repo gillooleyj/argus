@@ -46,6 +46,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
+        emailRedirectTo: "https://argus.cooeytools.com/login",
         data: {
           first_name: firstName.trim(),
           last_name:  lastName.trim(),
