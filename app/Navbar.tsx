@@ -18,6 +18,9 @@ export default function Navbar() {
     setMenuOpen(false);
   }, [pathname]);
 
+  // Don't show app nav links on MFA pages — those routes are blocked until MFA is complete
+  const isOnMfaPage = pathname?.startsWith("/mfa");
+
   async function handleLogout() {
     await supabase.auth.signOut();
     // Use a full navigation (not router.push) to bust the Next.js router cache
@@ -53,8 +56,8 @@ export default function Navbar() {
               </span>
             </Link>
 
-            {/* Desktop nav links — hidden on mobile */}
-            {user && (
+            {/* Desktop nav links — hidden on mobile, hidden on MFA pages */}
+            {user && !isOnMfaPage && (
               <div className="hidden sm:flex items-center gap-8">
                 <Link href="/certifications" className={`text-sm font-medium transition-colors ${linkClass("/certifications")}`}>
                   Certifications
@@ -98,8 +101,8 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Mobile hamburger — hidden on desktop */}
-            {user && (
+            {/* Mobile hamburger — hidden on desktop, hidden on MFA pages */}
+            {user && !isOnMfaPage && (
               <button
                 onClick={() => setMenuOpen((o) => !o)}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -123,7 +126,7 @@ export default function Navbar() {
         </div>
 
         {/* ── Mobile dropdown menu ─────────────────────────────────────────── */}
-        {user && menuOpen && (
+        {user && menuOpen && !isOnMfaPage && (
           <div className="sm:hidden border-t border-brand-gold/40 py-2">
             <Link
               href="/certifications"

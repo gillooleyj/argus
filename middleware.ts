@@ -71,12 +71,16 @@ export async function middleware(request: NextRequest) {
   // No MFA factor enrolled yet → must set up
   if (currentLevel === "aal1" && nextLevel === "aal1") {
     if (pathname.startsWith(MFA_SETUP_ROUTE)) return response;
+    // Allow auth/public routes so sign-out and login navigation always work
+    if (AUTH_ROUTES.includes(pathname) || PUBLIC_ROUTES.includes(pathname)) return response;
     return NextResponse.redirect(new URL(MFA_SETUP_ROUTE, request.url));
   }
 
   // MFA enrolled but not yet verified this session → must verify
   if (currentLevel === "aal1" && nextLevel === "aal2") {
     if (pathname === MFA_VERIFY_ROUTE) return response;
+    // Allow auth/public routes so sign-out and login navigation always work
+    if (AUTH_ROUTES.includes(pathname) || PUBLIC_ROUTES.includes(pathname)) return response;
     return NextResponse.redirect(new URL(MFA_VERIFY_ROUTE, request.url));
   }
 
