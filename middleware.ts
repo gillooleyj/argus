@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const AUTH_ROUTES = ["/login", "/signup", "/forgot-password"];
+const AUTH_ROUTES = ["/login", "/signup", "/forgot-password", "/update-password"];
 const PUBLIC_ROUTES = ["/"];
 // Always accessible regardless of auth state or beta gate (required by law)
 const LEGAL_ROUTES = ["/privacy", "/terms"];

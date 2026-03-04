@@ -16,6 +16,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionExpired = searchParams.get("timeout") === "1";
+  const passwordUpdated = searchParams.get("updated") === "1";
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -47,6 +48,11 @@ function LoginForm() {
         </p>
 
         <form onSubmit={handleLogin} className="space-y-4">
+          {passwordUpdated && (
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg px-3 py-2.5 text-green-700 dark:text-green-400 text-sm">
+              Password updated successfully. Sign in with your new password.
+            </div>
+          )}
           {sessionExpired && (
             <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg px-3 py-2.5 text-amber-700 dark:text-amber-400 text-sm">
               Your session expired due to inactivity. Please log in again.
