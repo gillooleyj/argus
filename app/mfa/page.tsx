@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type Mode = "totp" | "backup";
 
 export default function MFAVerifyPage() {
-  const router = useRouter();
-
   const [userId, setUserId] = useState("");
   const [factorId, setFactorId] = useState("");
   const [challengeId, setChallengeId] = useState("");
@@ -61,39 +58,48 @@ export default function MFAVerifyPage() {
     setTotpLoading(true);
     setTotpError(null);
 
-    const { error } = await supabase.auth.mfa.verify({
-      factorId,
-      challengeId,
-      code: totpCode,
-    });
+    try {
+      const { error } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId,
+        code: totpCode,
+      });
 
-    if (error) {
-      setTotpError("Invalid code. Please try again.");
-      setTotpLoading(false);
-      // Re-issue a fresh challenge so the old one doesn't expire
-      initChallenge();
+      if (error) {
+        setTotpError("Invalid code. Please try again.");
+        // Re-issue a fresh challenge so the old one doesn't expire
+        // TODO: initChallenge has no try/catch — a network error here will
+        // silently leave challengeId stale, keeping the submit button disabled.
+        initChallenge();
+        // Fire-and-forget audit log
+        if (userId) {
+          supabase.from("mfa_audit_log").insert({
+            user_id: userId,
+            event: "totp_verify_fail",
+            factor_id: factorId,
+          });
+        }
+        return;
+      }
+
       // Fire-and-forget audit log
       if (userId) {
         supabase.from("mfa_audit_log").insert({
           user_id: userId,
-          event: "totp_verify_fail",
+          event: "totp_verify_success",
           factor_id: factorId,
         });
       }
-      return;
-    }
 
-    // Fire-and-forget audit log
-    if (userId) {
-      supabase.from("mfa_audit_log").insert({
-        user_id: userId,
-        event: "totp_verify_success",
-        factor_id: factorId,
-      });
+      // Full navigation (not router.push) so the browser sends fresh cookies and
+      // middleware re-evaluates the aal2 session. router.push risks a race where
+      // the updated session cookie hasn't propagated before the RSC fetch fires.
+      window.location.href = "/certifications";
+    } catch {
+      setTotpError("Something went wrong. Please try again.");
+    } finally {
+      setTotpLoading(false);
     }
-
-    router.push("/certifications");
-    router.refresh();
   }
 
   // ── Backup code verification ─────────────────────────────────────────────────
@@ -116,10 +122,9 @@ export default function MFAVerifyPage() {
         return;
       }
 
-      // Factor is now deleted — refresh session then middleware sends to /mfa/setup
+      // Factor is now deleted — full reload so middleware sees the updated session
       await supabase.auth.refreshSession();
-      router.push("/mfa/setup?from=backup-code");
-      router.refresh();
+      window.location.href = "/mfa/setup?from=backup-code";
     } catch {
       setBackupError("Something went wrong. Please try again.");
       setBackupLoading(false);
@@ -233,9 +238,6 @@ export default function MFAVerifyPage() {
               ? "Use a backup code instead"
               : "Use authenticator app instead"}
           </button>
-          <p className="mt-3 text-xs text-brand-body/50">
-            Codes expire after a few minutes. Refresh the page if yours stops working.
-          </p>
         </div>
       </div>
     </div>
