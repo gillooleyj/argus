@@ -118,7 +118,7 @@ export default function Home() {
       <section className="border-t border-brand-gold/40 bg-brand-blue/30">
         <div className="max-w-6xl mx-auto px-6 py-16 text-center">
           <h2 className="text-3xl font-bold text-brand-heading mb-4">Start tracking your credentials today.</h2>
-          <p className="text-brand-body mb-8">Free to use. No credit card required.</p>
+          <p className="text-brand-body mb-8">Free to start. No credit card required.</p>
           <Link
             href="/signup"
             className="inline-flex bg-brand-gold hover:bg-brand-gold-hover text-white font-medium px-8 py-3 rounded-lg transition-colors text-sm"
