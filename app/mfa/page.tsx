@@ -28,24 +28,32 @@ export default function MFAVerifyPage() {
 
   const initChallenge = useCallback(async () => {
     setInitError(null);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) setUserId(user.id);
+    // Reset so the submit button is disabled while we fetch a fresh challenge
+    setChallengeId("");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) setUserId(user.id);
 
-    const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
-    if (listError || !factors?.totp?.length) {
-      setInitError("No authenticator found. Please sign in again.");
-      return;
-    }
-    const id = factors.totp[0].id;
-    setFactorId(id);
+      const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
+      if (listError || !factors?.totp?.length) {
+        setInitError("No authenticator found. Please sign in again.");
+        return;
+      }
+      const id = factors.totp[0].id;
+      setFactorId(id);
 
-    const { data: challenge, error: challengeError } =
-      await supabase.auth.mfa.challenge({ factorId: id });
-    if (challengeError || !challenge) {
-      setInitError("Failed to start MFA challenge. Please refresh.");
-      return;
+      const { data: challenge, error: challengeError } =
+        await supabase.auth.mfa.challenge({ factorId: id });
+      if (challengeError || !challenge) {
+        setInitError(challengeError?.message ?? "Failed to start MFA challenge. Please refresh.");
+        return;
+      }
+      console.log("[MFA] challenge ready:", challenge.id);
+      setChallengeId(challenge.id);
+    } catch (err) {
+      console.error("[MFA] initChallenge threw:", err);
+      setInitError("Failed to initialize MFA. Please refresh the page.");
     }
-    setChallengeId(challenge.id);
   }, []);
 
   useEffect(() => {
@@ -55,21 +63,30 @@ export default function MFAVerifyPage() {
   // ── TOTP verification ────────────────────────────────────────────────────────
   async function handleTOTP(e: React.FormEvent) {
     e.preventDefault();
+
+    // Guard: if initChallenge hasn't resolved yet (or failed), bail out before
+    // calling verify with empty IDs — the Supabase SDK may hang indefinitely
+    // rather than returning an error for an empty challengeId.
+    if (!factorId || !challengeId) {
+      setTotpError("Session not ready — please wait or refresh the page.");
+      return;
+    }
+
     setTotpLoading(true);
     setTotpError(null);
+    console.log("[MFA] submitting verify. factorId:", factorId, "challengeId:", challengeId);
 
     try {
-      const { error } = await supabase.auth.mfa.verify({
+      const { data, error } = await supabase.auth.mfa.verify({
         factorId,
         challengeId,
         code: totpCode,
       });
+      console.log("[MFA] verify result:", { data, error });
 
       if (error) {
-        setTotpError("Invalid code. Please try again.");
+        setTotpError(error.message ?? "Invalid code. Please try again.");
         // Re-issue a fresh challenge so the old one doesn't expire
-        // TODO: initChallenge has no try/catch — a network error here will
-        // silently leave challengeId stale, keeping the submit button disabled.
         initChallenge();
         // Fire-and-forget audit log
         if (userId) {
@@ -95,8 +112,13 @@ export default function MFAVerifyPage() {
       // middleware re-evaluates the aal2 session. router.push risks a race where
       // the updated session cookie hasn't propagated before the RSC fetch fires.
       window.location.href = "/certifications";
-    } catch {
-      setTotpError("Something went wrong. Please try again.");
+    } catch (err) {
+      console.error("[MFA] verify threw:", err);
+      setTotpError(
+        err instanceof Error
+          ? `Verification error: ${err.message}`
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setTotpLoading(false);
     }
