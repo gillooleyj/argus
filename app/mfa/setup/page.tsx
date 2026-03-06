@@ -61,45 +61,53 @@ function MFASetupInner() {
     setEnrollError(null);
     setShowSecret(false);
 
-    const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
-    if (listError) {
-      setInitError("Failed to check MFA status. Please refresh the page.");
-      return;
-    }
+    try {
+      const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
+      if (listError) {
+        setInitError("Failed to check MFA status. Please refresh the page.");
+        return;
+      }
 
-    if (factors.totp.length > 0) {
-      router.replace("/certifications");
-      return;
-    }
+      if (factors.totp.length > 0) {
+        router.replace("/certifications");
+        return;
+      }
 
-    const unverifiedFactor = factors.all.find(
-      (f) => f.factor_type === "totp" && f.status === "unverified"
-    );
-    if (unverifiedFactor) {
-      const { error: unenrollError } = await supabase.auth.mfa.unenroll({
-        factorId: unverifiedFactor.id,
+      const unverifiedFactor = factors.all.find(
+        (f) => f.factor_type === "totp" && f.status === "unverified"
+      );
+      if (unverifiedFactor) {
+        const { error: unenrollError } = await supabase.auth.mfa.unenroll({
+          factorId: unverifiedFactor.id,
+        });
+        if (unenrollError) {
+          setInitError(
+            "Failed to clear a previous incomplete MFA setup. Please refresh the page."
+          );
+          return;
+        }
+      }
+
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: "totp",
       });
-      if (unenrollError) {
+      if (error || !data) {
         setInitError(
-          "Failed to clear a previous incomplete MFA setup. Please refresh the page."
+          error?.message ?? "Failed to start MFA setup. Please refresh the page."
         );
         return;
       }
-    }
 
-    const { data, error } = await supabase.auth.mfa.enroll({
-      factorType: "totp",
-    });
-    if (error || !data) {
+      setFactorId(data.id);
+      setTotpUri(data.totp.uri);
+      setSecret(data.totp.secret);
+    } catch (err) {
       setInitError(
-        error?.message ?? "Failed to start MFA setup. Please refresh the page."
+        err instanceof Error
+          ? `Setup failed: ${err.message}`
+          : "Failed to start MFA setup. Please refresh the page."
       );
-      return;
     }
-
-    setFactorId(data.id);
-    setTotpUri(data.totp.uri);
-    setSecret(data.totp.secret);
   }, [router]);
 
   useEffect(() => {
@@ -117,62 +125,69 @@ function MFASetupInner() {
     setEnrollLoading(true);
     setEnrollError(null);
 
-    const { data: challengeData, error: challengeError } =
-      await supabase.auth.mfa.challenge({ factorId });
-    if (challengeError || !challengeData) {
-      setEnrollError(
-        challengeError?.message ?? "Failed to start verification. Please try again."
-      );
-      setEnrollLoading(false);
-      return;
-    }
+    try {
+      const { data: challengeData, error: challengeError } =
+        await supabase.auth.mfa.challenge({ factorId });
+      if (challengeError || !challengeData) {
+        setEnrollError(
+          challengeError?.message ?? "Failed to start verification. Please try again."
+        );
+        return;
+      }
 
-    const { error: verifyError } = await supabase.auth.mfa.verify({
-      factorId,
-      challengeId: challengeData.id,
-      code: verifyCode,
-    });
-    if (verifyError) {
-      setEnrollError("Invalid code. Make sure your device clock is correct and try again.");
-      setEnrollLoading(false);
-      return;
-    }
-
-    setSaving(true);
-    const codes = generateBackupCodes();
-    const hashes = await Promise.all(codes.map(hashCode));
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      await supabase
-        .from("backup_codes")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("factor_id", factorId);
-
-      await supabase.from("backup_codes").insert(
-        hashes.map((code_hash) => ({
-          user_id: user.id,
-          factor_id: factorId,
-          code_hash,
-        }))
-      );
-
-      // Fire-and-forget audit log
-      supabase.from("mfa_audit_log").insert({
-        user_id: user.id,
-        event: "enrollment_complete",
-        factor_id: factorId,
+      const { error: verifyError } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId: challengeData.id,
+        code: verifyCode,
       });
-    }
+      if (verifyError) {
+        setEnrollError("Invalid code. Make sure your device clock is correct and try again.");
+        return;
+      }
 
-    setBackupCodes(codes);
-    setSaving(false);
-    setEnrollLoading(false);
-    setScreen("backup-codes");
+      setSaving(true);
+      const codes = generateBackupCodes();
+      const hashes = await Promise.all(codes.map(hashCode));
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await supabase
+          .from("backup_codes")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("factor_id", factorId);
+
+        await supabase.from("backup_codes").insert(
+          hashes.map((code_hash) => ({
+            user_id: user.id,
+            factor_id: factorId,
+            code_hash,
+          }))
+        );
+
+        // Fire-and-forget audit log
+        supabase.from("mfa_audit_log").insert({
+          user_id: user.id,
+          event: "enrollment_complete",
+          factor_id: factorId,
+        });
+      }
+
+      setBackupCodes(codes);
+      setScreen("backup-codes");
+    } catch (err) {
+      setEnrollError(
+        err instanceof Error
+          ? `Something went wrong: ${err.message}`
+          : "Something went wrong. Please try again."
+      );
+    } finally {
+      setEnrollLoading(false);
+      setSaving(false);
+    }
   }
 
   function downloadCodes() {
@@ -192,8 +207,7 @@ function MFASetupInner() {
 
   async function handleDone() {
     await supabase.auth.refreshSession();
-    router.push("/certifications");
-    router.refresh();
+    window.location.href = "/certifications";
   }
 
   // ── Backup codes screen ────────────────────────────────────────────────────
