@@ -77,10 +77,16 @@ function MFASetupInner() {
         (f) => f.factor_type === "totp" && f.status === "unverified"
       );
       if (unverifiedFactor) {
-        const { error: unenrollError } = await supabase.auth.mfa.unenroll({
-          factorId: unverifiedFactor.id,
+        // Use the server-side route so the admin API handles deletion.
+        // mfa.unenroll() (client-side) triggers Supabase's "Authenticator App
+        // Removed" security email even for unverified factors — i.e. when MFA
+        // was never active. The admin path bypasses that notification.
+        const res = await fetch("/api/auth/cleanup-factor", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ factorId: unverifiedFactor.id }),
         });
-        if (unenrollError) {
+        if (!res.ok) {
           setInitError(
             "Failed to clear a previous incomplete MFA setup. Please refresh the page."
           );
