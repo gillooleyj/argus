@@ -1,0 +1,845 @@
+
+
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+
+COMMENT ON SCHEMA "public" IS 'standard public schema';
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_stat_statements" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION "public"."check_and_increment_backup_code_rate_limit"("p_user_id" "uuid") RETURNS integer
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public'
+    AS $$             
+ DECLARE
+   v_count INTEGER;                               
+ BEGIN                                                  
+   -- Callers may only increment their own counter
+   IF auth.uid() IS NULL OR auth.uid() != p_user_id THEN
+     RAISE EXCEPTION 'Unauthorized';
+   END IF;                                                           
+                               
+   INSERT INTO mfa_rate_limits (user_id, attempt_count, window_start)
+   VALUES (p_user_id, 1, NOW())
+   ON CONFLICT (user_id) DO UPDATE SET                                  
+     attempt_count = CASE
+       WHEN mfa_rate_limits.window_start < NOW() - INTERVAL '15 minutes'
+       THEN 1
+       ELSE mfa_rate_limits.attempt_count + 1
+     END,                                                               
+     window_start = CASE
+       WHEN mfa_rate_limits.window_start < NOW() - INTERVAL '15 minutes'
+       THEN NOW()
+       ELSE mfa_rate_limits.window_start
+     END
+   RETURNING attempt_count INTO v_count;
+     
+   RETURN v_count;
+ END;
+ $$;
+
+
+ALTER FUNCTION "public"."check_and_increment_backup_code_rate_limit"("p_user_id" "uuid") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public'
+    AS $$
+     BEGIN
+       INSERT INTO public.user_profiles (user_id, first_name, last_name)
+       VALUES (
+         NEW.id,
+         COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
+         COALESCE(NEW.raw_user_meta_data->>'last_name',  '')
+       )
+       ON CONFLICT (user_id) DO NOTHING;
+       RETURN NEW;
+     END;
+     $$;
+
+
+ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."update_updated_at"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO 'public'
+    AS $$
+     BEGIN
+       NEW.updated_at = now();
+       RETURN NEW;
+     END;
+     $$;
+
+
+ALTER FUNCTION "public"."update_updated_at"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."update_updated_at_column"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO 'public'
+    AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."update_updated_at_column"() OWNER TO "postgres";
+
+SET default_tablespace = '';
+
+SET default_table_access_method = "heap";
+
+
+CREATE TABLE IF NOT EXISTS "public"."backup_codes" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "factor_id" "text" NOT NULL,
+    "code_hash" "text" NOT NULL,
+    "used_at" timestamp with time zone,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."backup_codes" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."certification_activities" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "certification_id" bigint NOT NULL,
+    "activity_id" "uuid" NOT NULL,
+    "hours_applied" numeric(6,2) NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "submitted_to_org" boolean DEFAULT false NOT NULL,
+    "submitted_date" "date",
+    "submission_notes" "text",
+    CONSTRAINT "certification_activities_hours_applied_check" CHECK (("hours_applied" > (0)::numeric))
+);
+
+
+ALTER TABLE "public"."certification_activities" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."certifications" (
+    "id" bigint NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "name" "text",
+    "organization" "text",
+    "issue_date" "date",
+    "expiration_date" "date",
+    "cpe_required" integer,
+    "cpe_cycle_months" integer,
+    "annual_minimum_cpe" integer,
+    "digital_certificate_url" "text",
+    "organization_url" "text",
+    "user_id" "uuid",
+    "cpe_cycle_length" integer,
+    "cpe_earned" numeric(6,2) DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE "public"."certifications" OWNER TO "postgres";
+
+
+ALTER TABLE "public"."certifications" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."certifications_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."cpe_activities" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "title" "text" NOT NULL,
+    "provider" "text" NOT NULL,
+    "activity_date" "date" NOT NULL,
+    "total_hours" numeric(6,2) NOT NULL,
+    "category" "text",
+    "description" "text",
+    "attachment_urls" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "cpe_activities_total_hours_check" CHECK (("total_hours" > (0)::numeric))
+);
+
+
+ALTER TABLE "public"."cpe_activities" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."mfa_audit_log" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "event" "text" NOT NULL,
+    "factor_id" "text",
+    "metadata" "jsonb",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."mfa_audit_log" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."mfa_rate_limits" (
+    "user_id" "uuid" NOT NULL,
+    "attempt_count" integer DEFAULT 0 NOT NULL,
+    "window_start" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."mfa_rate_limits" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."user_profiles" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "first_name" "text" DEFAULT ''::"text" NOT NULL,
+    "last_name" "text" DEFAULT ''::"text" NOT NULL,
+    "job_title" "text",
+    "organization_type" "text",
+    "city" "text",
+    "state_province" "text",
+    "postal_code" "text",
+    "country" "text",
+    "certification_focus" "text",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "remind_quarterly_submit" boolean DEFAULT false NOT NULL,
+    "remind_20hrs_unsubmitted" boolean DEFAULT true NOT NULL,
+    "remind_90days_expiry" boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE "public"."user_profiles" OWNER TO "postgres";
+
+
+ALTER TABLE ONLY "public"."backup_codes"
+    ADD CONSTRAINT "backup_codes_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."certification_activities"
+    ADD CONSTRAINT "certification_activities_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."certifications"
+    ADD CONSTRAINT "certifications_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."cpe_activities"
+    ADD CONSTRAINT "cpe_activities_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."mfa_audit_log"
+    ADD CONSTRAINT "mfa_audit_log_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."mfa_rate_limits"
+    ADD CONSTRAINT "mfa_rate_limits_pkey" PRIMARY KEY ("user_id");
+
+
+
+ALTER TABLE ONLY "public"."certification_activities"
+    ADD CONSTRAINT "unique_cert_activity" UNIQUE ("certification_id", "activity_id");
+
+
+
+ALTER TABLE ONLY "public"."user_profiles"
+    ADD CONSTRAINT "user_profiles_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."user_profiles"
+    ADD CONSTRAINT "user_profiles_user_id_key" UNIQUE ("user_id");
+
+
+
+CREATE INDEX "cert_activities_act_idx" ON "public"."certification_activities" USING "btree" ("activity_id");
+
+
+
+CREATE INDEX "cert_activities_cert_id_idx" ON "public"."certification_activities" USING "btree" ("certification_id");
+
+
+
+CREATE INDEX "cpe_activities_date_idx" ON "public"."cpe_activities" USING "btree" ("activity_date" DESC);
+
+
+
+CREATE INDEX "cpe_activities_user_id_idx" ON "public"."cpe_activities" USING "btree" ("user_id");
+
+
+
+CREATE INDEX "idx_backup_codes_unused" ON "public"."backup_codes" USING "btree" ("user_id", "factor_id") WHERE ("used_at" IS NULL);
+
+
+
+CREATE INDEX "idx_backup_codes_user_factor" ON "public"."backup_codes" USING "btree" ("user_id", "factor_id");
+
+
+
+CREATE INDEX "idx_mfa_audit_log_user" ON "public"."mfa_audit_log" USING "btree" ("user_id", "created_at" DESC);
+
+
+
+CREATE OR REPLACE TRIGGER "cpe_activities_set_updated_at" BEFORE UPDATE ON "public"."cpe_activities" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at_column"();
+
+
+
+CREATE OR REPLACE TRIGGER "user_profiles_updated_at" BEFORE UPDATE ON "public"."user_profiles" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at"();
+
+
+
+ALTER TABLE ONLY "public"."backup_codes"
+    ADD CONSTRAINT "backup_codes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."certification_activities"
+    ADD CONSTRAINT "certification_activities_activity_id_fkey" FOREIGN KEY ("activity_id") REFERENCES "public"."cpe_activities"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."certification_activities"
+    ADD CONSTRAINT "certification_activities_certification_id_fkey" FOREIGN KEY ("certification_id") REFERENCES "public"."certifications"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."certifications"
+    ADD CONSTRAINT "certifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."cpe_activities"
+    ADD CONSTRAINT "cpe_activities_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."mfa_audit_log"
+    ADD CONSTRAINT "mfa_audit_log_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."mfa_rate_limits"
+    ADD CONSTRAINT "mfa_rate_limits_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."user_profiles"
+    ADD CONSTRAINT "user_profiles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+CREATE POLICY "Users can delete own activities" ON "public"."cpe_activities" FOR DELETE USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can delete own backup codes" ON "public"."backup_codes" FOR DELETE USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can delete own cert-activity links" ON "public"."certification_activities" FOR DELETE USING ((EXISTS ( SELECT 1
+   FROM "public"."certifications" "c"
+  WHERE (("c"."id" = "certification_activities"."certification_id") AND ("c"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Users can delete own certifications" ON "public"."certifications" FOR DELETE USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can insert own activities" ON "public"."cpe_activities" FOR INSERT WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can insert own audit events" ON "public"."mfa_audit_log" FOR INSERT WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can insert own backup codes" ON "public"."backup_codes" FOR INSERT WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can insert own cert-activity links" ON "public"."certification_activities" FOR INSERT WITH CHECK ((EXISTS ( SELECT 1
+   FROM "public"."certifications" "c"
+  WHERE (("c"."id" = "certification_activities"."certification_id") AND ("c"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Users can insert own certifications" ON "public"."certifications" FOR INSERT WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can insert own profile" ON "public"."user_profiles" FOR INSERT WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can read own audit log" ON "public"."mfa_audit_log" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can read own backup codes" ON "public"."backup_codes" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can read own profile" ON "public"."user_profiles" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can update own activities" ON "public"."cpe_activities" FOR UPDATE USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can update own backup codes" ON "public"."backup_codes" FOR UPDATE USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can update own cert-activity links" ON "public"."certification_activities" FOR UPDATE USING ((EXISTS ( SELECT 1
+   FROM "public"."certifications" "c"
+  WHERE (("c"."id" = "certification_activities"."certification_id") AND ("c"."user_id" = "auth"."uid"()))))) WITH CHECK ((EXISTS ( SELECT 1
+   FROM "public"."certifications" "c"
+  WHERE (("c"."id" = "certification_activities"."certification_id") AND ("c"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Users can update own certifications" ON "public"."certifications" FOR UPDATE USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can update own profile" ON "public"."user_profiles" FOR UPDATE USING (("user_id" = "auth"."uid"())) WITH CHECK (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can view own activities" ON "public"."cpe_activities" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can view own cert-activity links" ON "public"."certification_activities" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."certifications" "c"
+  WHERE (("c"."id" = "certification_activities"."certification_id") AND ("c"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Users can view own certifications" ON "public"."certifications" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+ALTER TABLE "public"."backup_codes" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."certification_activities" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."certifications" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."cpe_activities" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."mfa_audit_log" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."mfa_rate_limits" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."user_profiles" ENABLE ROW LEVEL SECURITY;
+
+
+
+
+ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+
+
+GRANT USAGE ON SCHEMA "public" TO "postgres";
+GRANT USAGE ON SCHEMA "public" TO "anon";
+GRANT USAGE ON SCHEMA "public" TO "authenticated";
+GRANT USAGE ON SCHEMA "public" TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GRANT ALL ON FUNCTION "public"."check_and_increment_backup_code_rate_limit"("p_user_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."check_and_increment_backup_code_rate_limit"("p_user_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."check_and_increment_backup_code_rate_limit"("p_user_id" "uuid") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."update_updated_at"() TO "anon";
+GRANT ALL ON FUNCTION "public"."update_updated_at"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_updated_at"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."update_updated_at_column"() TO "anon";
+GRANT ALL ON FUNCTION "public"."update_updated_at_column"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_updated_at_column"() TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GRANT ALL ON TABLE "public"."backup_codes" TO "anon";
+GRANT ALL ON TABLE "public"."backup_codes" TO "authenticated";
+GRANT ALL ON TABLE "public"."backup_codes" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."certification_activities" TO "anon";
+GRANT ALL ON TABLE "public"."certification_activities" TO "authenticated";
+GRANT ALL ON TABLE "public"."certification_activities" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."certifications" TO "anon";
+GRANT ALL ON TABLE "public"."certifications" TO "authenticated";
+GRANT ALL ON TABLE "public"."certifications" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."certifications_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."certifications_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."certifications_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."cpe_activities" TO "anon";
+GRANT ALL ON TABLE "public"."cpe_activities" TO "authenticated";
+GRANT ALL ON TABLE "public"."cpe_activities" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."mfa_audit_log" TO "anon";
+GRANT ALL ON TABLE "public"."mfa_audit_log" TO "authenticated";
+GRANT ALL ON TABLE "public"."mfa_audit_log" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."mfa_rate_limits" TO "anon";
+GRANT ALL ON TABLE "public"."mfa_rate_limits" TO "authenticated";
+GRANT ALL ON TABLE "public"."mfa_rate_limits" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."user_profiles" TO "anon";
+GRANT ALL ON TABLE "public"."user_profiles" TO "authenticated";
+GRANT ALL ON TABLE "public"."user_profiles" TO "service_role";
+
+
+
+
+
+
+
+
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES TO "service_role";
+
+
+
+
+
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS TO "service_role";
+
+
+
+
+
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+drop extension if exists "pg_net";
+
+CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+
+  create policy "Users can delete own attachments"
+  on "storage"."objects"
+  as permissive
+  for delete
+  to public
+using (((bucket_id = 'cpe-attachments'::text) AND ((auth.uid())::text = split_part(name, '/'::text, 1))));
+
+
+
+  create policy "Users can upload own attachments"
+  on "storage"."objects"
+  as permissive
+  for insert
+  to public
+with check (((bucket_id = 'cpe-attachments'::text) AND ((auth.uid())::text = split_part(name, '/'::text, 1))));
+
+
+
+  create policy "Users can view own attachments"
+  on "storage"."objects"
+  as permissive
+  for select
+  to public
+using (((bucket_id = 'cpe-attachments'::text) AND ((auth.uid())::text = split_part(name, '/'::text, 1))));
+
+
+
