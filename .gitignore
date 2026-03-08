@@ -30,3 +30,5 @@ supabase */
 
 # misc
 .DS_Store
+supabase/.branches/
+supabase/.temp/
