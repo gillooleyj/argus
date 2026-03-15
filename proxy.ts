@@ -9,14 +9,18 @@ const LEGAL_ROUTES = ["/privacy", "/terms"];
 const MFA_VERIFY_ROUTE = "/mfa";
 const MFA_SETUP_ROUTE = "/mfa/setup";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── Beta access gate ──────────────────────────────────────────────────────
   // Remove SITE_PASSWORD from env to disable this gate after user testing.
   const SITE_PASSWORD = process.env.SITE_PASSWORD;
   // Legal pages and beta-access gate page: always through, no auth checks
-  if (pathname.startsWith("/beta-access") || LEGAL_ROUTES.includes(pathname)) {
+if (
+  pathname.startsWith("/beta-access") ||
+  LEGAL_ROUTES.includes(pathname) ||
+  pathname.startsWith("/update-password")
+) {
     return NextResponse.next({ request });
   }
   if (SITE_PASSWORD) {
