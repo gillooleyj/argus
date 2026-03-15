@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://argus.cooeytools.com/update-password",
+      redirectTo: `${window.location.origin}/api/auth/callback?type=recovery`,
     });
 
     if (error) {
